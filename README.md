@@ -9,7 +9,8 @@ npm i fastify-react --save
 ```
 
 ## Usage
-Since Next needs some time to be ready on the first launch, you must declare your routes inside the `after` callback, after you registered the plugin.
+Since Next needs some time to be ready on the first launch, you must declare your routes inside the `after` callback, after you registered the plugin.  
+The plugin will expose the api `next` that will handle the rendering for you.
 ```js
 const fastify = require('fastify')()
 
@@ -45,6 +46,13 @@ If you need to pass custom options to `next` just pass them to register as secon
 fastify.register(require('fastify-react'), { dev: true })
 ```
 
+If you need to handle yourself the render part, just pass a callback to `next`:
+```js
+fastify.next('/hello', (app, req, reply) => {
+  // your code
+  app.render(req.req, reply.res, '/hello', req.query, {}})
+})
+```
 ## Acknowledgements
 
 This project is kindly sponsored by:
