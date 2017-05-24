@@ -1,0 +1,40 @@
+{
+  "name": "fastify-react",
+  "version": "0.1.0",
+  "description": "React server side rendering support for Fastify with Next",
+  "main": "index.js",
+  "scripts": {
+    "build": "next build",
+    "test": "npm run build && standard && NODE_ENV=production node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastify/fastify-react.git"
+  },
+  "keywords": [
+    "fastify",
+    "react",
+    "next",
+    "ssr",
+    "server",
+    "side",
+    "rendering"
+  ],
+  "author": "Tomas Della Vedova - @delvedor (http://delved.org)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fastify/fastify-react/issues"
+  },
+  "homepage": "https://github.com/fastify/fastify-react#readme",
+  "dependencies": {
+    "fastify-plugin": "^0.1.0",
+    "next": "^2.4.0"
+  },
+  "devDependencies": {
+    "standard": "^10.0.2",
+    "fastify": "^0.20.0",
+    "tap": "^10.3.2",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  }
+}
