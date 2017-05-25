@@ -11,7 +11,7 @@ npm i fastify-react --save
 
 ## Usage
 Since Next needs some time to be ready on the first launch, you must declare your routes inside the `after` callback, after you registered the plugin.  
-The plugin will expose the api `next` that will handle the rendering for you.
+The plugin will expose the api `next` in Fastify that will handle the rendering for you.  
 ```js
 const fastify = require('fastify')()
 
@@ -41,8 +41,12 @@ fastify.listen(3000, err => {
   console.log('Server listenging on http://localhost:3000')
 })
 ```
-
-If you need to pass custom options to `next` just pass them to register as second parameter.
+All you server rendered pages must be saved in the folder `pages`, as you can see in the [next documentation](https://github.com/zeit/next.js/#custom-server-and-routing).
+```js
+// /pages/hello.js
+export default () => <div>hello world</div>
+```
+If you need to pass [custom options](https://github.com/zeit/next.js/#custom-configuration) to `next` just pass them to register as second parameter.
 ```js
 fastify.register(require('fastify-react'), { dev: true })
 ```
@@ -51,6 +55,7 @@ If you need to handle yourself the render part, just pass a callback to `next`:
 ```js
 fastify.next('/hello', (app, req, reply) => {
   // your code
+  // `app` is the Next instance
   app.render(req.req, reply.res, '/hello', req.query, {}})
 })
 ```
