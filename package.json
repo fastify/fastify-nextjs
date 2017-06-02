@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "standard": "^10.0.2",
-    "fastify": "^0.20.0",
+    "fastify": "^0.21.0",
     "tap": "^10.3.2",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
