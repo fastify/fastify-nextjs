@@ -32,7 +32,7 @@ function fastifyReact (fastify, options, next) {
     if (callback) assert(typeof callback === 'function', 'callback must be a function')
 
     const method = opts.method || 'get'
-    this[method.toLowerCase()](path, opts.schema, handler)
+    this[method.toLowerCase()](path, opts, handler)
 
     function handler (req, reply) {
       if (callback) {
