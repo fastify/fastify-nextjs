@@ -28,7 +28,7 @@
   "homepage": "https://github.com/fastify/fastify-react#readme",
   "dependencies": {
     "fastify-plugin": "^0.1.0",
-    "next": "^2.4.7"
+    "next": "^3.0.3"
   },
   "devDependencies": {
     "fastify": "^0.25.1",
