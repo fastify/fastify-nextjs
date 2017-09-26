@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "fastify": "^0.26.0",
-    "react": "^15.6.1",
+    "react": "^16.0.0",
     "react-dom": "^15.6.1",
     "shot": "^3.4.2",
     "standard": "^10.0.2",
