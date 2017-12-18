@@ -44,4 +44,4 @@ function fastifyReact (fastify, options, next) {
   }
 }
 
-module.exports = fp(fastifyReact, '>=0.13.1')
+module.exports = fp(fastifyReact, { fastify: '>=0.13.1' })
