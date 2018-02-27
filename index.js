@@ -45,6 +45,6 @@ function fastifyReact (fastify, options, next) {
 }
 
 module.exports = fp(fastifyReact, {
-  fastify: '>=0.13.1',
+  fastify: '>=1.0.0-rc.1',
   name: 'fastify-react'
 })

@@ -20,7 +20,7 @@ test('should return an html document', t => {
   }, (err, res) => {
     t.error(err)
     t.equal(res.statusCode, 200)
-    t.equal(res.headers['content-type'], 'text/html')
+    t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
   })
 
   fastify.close()
@@ -42,7 +42,7 @@ test('should support different methods', t => {
   }, (err, res) => {
     t.error(err)
     t.equal(res.statusCode, 200)
-    t.equal(res.headers['content-type'], 'text/html')
+    t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
   })
 
   fastify.close()
@@ -66,7 +66,7 @@ test('should support a custom handler', t => {
   }, (err, res) => {
     t.error(err)
     t.equal(res.statusCode, 200)
-    t.equal(res.headers['content-type'], 'text/html')
+    t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
   })
 
   fastify.close()
