@@ -26,21 +26,7 @@ fastify.listen(3000, err => {
   console.log('Server listenging on http://localhost:3000')
 })
 ```
-Or you can use the `ready` callback:
-```js
-const fastify = require('fastify')()
 
-fastify.register(require('fastify-react'))
-
-fastify.ready(() => {
-  fastify.next('/hello')
-})
-
-fastify.listen(3000, err => {
-  if (err) throw err
-  console.log('Server listenging on http://localhost:3000')
-})
-```
 All you server rendered pages must be saved in the folder `pages`, as you can see in the [next documentation](https://github.com/zeit/next.js/#custom-server-and-routing).
 ```js
 // /pages/hello.js
@@ -56,7 +42,7 @@ If you need to handle yourself the render part, just pass a callback to `next`:
 fastify.next('/hello', (app, req, reply) => {
   // your code
   // `app` is the Next instance
-  app.render(req.req, reply.res, '/hello', req.query, {}})
+  app.render(req.raw, reply.res, '/hello', req.query, {}})
 })
 ```
 ## Acknowledgements
