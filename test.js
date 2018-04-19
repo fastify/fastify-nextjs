@@ -99,7 +99,7 @@ test('should throw if path is not a string', t => {
   const fastify = Fastify()
   fastify
     .register(require('./index'))
-    .ready(err => {
+    .after(err => {
       t.error(err)
       try {
         fastify.next(null)
@@ -118,7 +118,7 @@ test('should throw if opts.method is not a string', t => {
   const fastify = Fastify()
   fastify
     .register(require('./index'))
-    .ready(err => {
+    .after(err => {
       t.error(err)
       try {
         fastify.next('/hello', { method: 1 })
@@ -137,7 +137,7 @@ test('should throw if opts.schema is not an object', t => {
   const fastify = Fastify()
   fastify
     .register(require('./index'))
-    .ready(err => {
+    .after(err => {
       t.error(err)
       try {
         fastify.next('/hello', { schema: 1 })
@@ -146,6 +146,8 @@ test('should throw if opts.schema is not an object', t => {
         t.equal(e.message, 'options.schema must be an object')
       }
     })
+
+  fastify.close()
 })
 
 test('should throw if opts.next is not an object', t => {
@@ -154,7 +156,7 @@ test('should throw if opts.next is not an object', t => {
   const fastify = Fastify()
   fastify
     .register(require('./index'))
-    .ready(err => {
+    .after(err => {
       t.error(err)
       try {
         fastify.next('/hello', { next: 1 })
@@ -173,7 +175,7 @@ test('should throw if callback is not a function', t => {
   const fastify = Fastify()
   fastify
     .register(require('./index'))
-    .ready(err => {
+    .after(err => {
       t.error(err)
       try {
         fastify.next('/hello', {}, 1)
