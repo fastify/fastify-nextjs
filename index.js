@@ -39,12 +39,12 @@ function fastifyReact (fastify, options, next) {
         return callback(app, req, reply)
       }
 
-      app.render(req.req, reply.res, path, req.query, opts.next || {})
+      app.render(req.raw, reply.res, path, req.query, opts.next || {})
     }
   }
 }
 
 module.exports = fp(fastifyReact, {
-  fastify: '>=1.0.0-rc.1',
+  fastify: '>=1.0.0',
   name: 'fastify-react'
 })
