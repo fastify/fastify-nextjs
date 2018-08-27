@@ -14,7 +14,6 @@ fastify
     })
     // Then register your routes
     fastify.next('/hello')
-
   })
 
 fastify.listen(3000, err => {
