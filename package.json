@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "next build",
+    "build:prod": "NODE_ENV=production next build",
+    "dev": "node example.js",
+    "serve": "npm run build:prod && NODE_ENV=production node example.js",
     "test": "npm run build && standard && NODE_ENV=production node test.js"
   },
   "repository": {
