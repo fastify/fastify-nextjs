@@ -13,7 +13,15 @@ function fastifyReact (fastify, options, next) {
   app
     .prepare()
     .then(() => {
-      fastify.decorate('next', route.bind(fastify))
+      fastify
+        .decorate('next', route.bind(fastify))
+        .addHook('onClose', function () {
+          app.close()
+        })
+        .after(() => {
+          fastify.next('/_next/*',
+            (app, req, reply) => app.handleRequest(req.req, reply.res))
+        })
       next()
     })
     .catch(err => next(err))

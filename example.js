@@ -5,14 +5,6 @@ const fastify = require('fastify')()
 fastify
   .register(require('./index'))
   .after(() => {
-    // Add this to serve the _next assets
-    fastify.next('/_next/*', (app, req, reply) => {
-      return app.handleRequest(req.req, reply.res)
-        .then(() => {
-          reply.sent = true
-        })
-    })
-    // Then register your routes
     fastify.next('/hello')
   })
 
