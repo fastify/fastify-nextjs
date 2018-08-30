@@ -13,7 +13,15 @@ function fastifyReact (fastify, options, next) {
   app
     .prepare()
     .then(() => {
-      fastify.decorate('next', route.bind(fastify))
+      fastify
+        .decorate('next', route.bind(fastify))
+        .addHook('onClose', function () {
+          app.close()
+        })
+        .after(() => {
+          fastify.next('/_next/*',
+            (app, req, reply) => app.handleRequest(req.req, reply.res))
+        })
       next()
     })
     .catch(err => next(err))
@@ -39,12 +47,12 @@ function fastifyReact (fastify, options, next) {
         return callback(app, req, reply)
       }
 
-      app.render(req.req, reply.res, path, req.query, opts.next || {})
+      app.render(req.raw, reply.res, path, req.query, opts.next || {})
     }
   }
 }
 
 module.exports = fp(fastifyReact, {
-  fastify: '>=1.0.0-rc.1',
+  fastify: '>=1.0.0',
   name: 'fastify-react'
 })

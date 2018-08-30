@@ -1,10 +1,13 @@
 {
   "name": "fastify-react",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "React server side rendering support for Fastify with Next",
   "main": "index.js",
   "scripts": {
     "build": "next build",
+    "build:prod": "NODE_ENV=production next build",
+    "dev": "node example.js",
+    "serve": "npm run build:prod && NODE_ENV=production node example.js",
     "test": "npm run build && standard && NODE_ENV=production node test.js"
   },
   "repository": {
@@ -27,14 +30,14 @@
   },
   "homepage": "https://github.com/fastify/fastify-react#readme",
   "dependencies": {
-    "fastify-plugin": "^0.2.2",
-    "next": "^5.0.0"
+    "fastify-plugin": "^1.2.0",
+    "next": "^6.1.1"
   },
   "devDependencies": {
-    "fastify": "^1.0.0-rc.2",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "standard": "^11.0.0",
-    "tap": "^11.0.0"
+    "fastify": "^1.11.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "standard": "^11.0.1",
+    "tap": "^12.0.1"
   }
 }
