@@ -191,10 +191,10 @@ test('should throw if callback is not a function', t => {
 })
 
 test('should serve /_next/* static assets', t => {
-  t.plan(12)
+  t.plan(18)
 
   const buildId = readFileSync(join(__dirname, '.next', 'BUILD_ID'), 'utf-8')
-  const mainUrl = require('./.next/build-manifest.json')['main.js'][0]
+  const manifest = require('./.next/build-manifest.json')
 
   const fastify = Fastify()
 
@@ -204,10 +204,14 @@ test('should serve /_next/* static assets', t => {
       fastify.next('/hello')
     })
 
-  testNextAsset(t, fastify, `/_next/${buildId}/page/hello.js`)
-  testNextAsset(t, fastify, `/_next/${buildId}/page/_app.js`)
-  testNextAsset(t, fastify, `/_next/${buildId}/page/_error.js`)
-  testNextAsset(t, fastify, `/_next/${mainUrl}`)
+  const pagePrefix = `/_next/static/${buildId}/pages`
+
+  testNextAsset(t, fastify, `${pagePrefix}/hello.js`)
+  testNextAsset(t, fastify, `${pagePrefix}/_app.js`)
+  testNextAsset(t, fastify, `${pagePrefix}/_error.js`)
+
+  let commonAssets = manifest.pages['/hello']
+  commonAssets.map(suffix => testNextAsset(t, fastify, `/_next/${suffix}`))
 
   fastify.close()
 })
