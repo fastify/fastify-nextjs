@@ -8,10 +8,10 @@
   },
   "scripts": {
     "build": "next build",
-    "build:prod": "NODE_ENV=production next build",
+    "build:prod": "cross-env NODE_ENV=production next build",
     "dev": "node example.js",
-    "serve": "npm run build:prod && NODE_ENV=production node example.js",
-    "test": "npm run build:prod && standard && NODE_ENV=production tap test.js"
+    "serve": "npm run build:prod && cross-env NODE_ENV=production node example.js",
+    "test": "npm run build:prod && standard && cross-env NODE_ENV=production tap test.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
     "next": "^7.0.0"
   },
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "fastify": "^1.11.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
