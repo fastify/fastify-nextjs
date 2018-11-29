@@ -6,6 +6,11 @@
   "engines": {
     "node": ">=8"
   },
+  "standard": {
+    "ignore": [
+      "*.jsx"
+    ]
+  },
   "scripts": {
     "build": "next build",
     "build:prod": "cross-env NODE_ENV=production next build",
@@ -33,15 +38,15 @@
   },
   "homepage": "https://github.com/fastify/fastify-react#readme",
   "dependencies": {
-    "fastify-plugin": "^1.2.0",
-    "next": "^7.0.0"
+    "fastify-plugin": "^1.2.1",
+    "next": "^7.0.2"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",
-    "fastify": "^1.11.2",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "standard": "^11.0.1",
-    "tap": "^12.0.1"
+    "fastify": "^1.13.1",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "standard": "^12.0.1",
+    "tap": "^12.1.0"
   }
 }
