@@ -16,7 +16,7 @@
     "build:prod": "cross-env NODE_ENV=production next build",
     "dev": "node example.js",
     "serve": "npm run build:prod && cross-env NODE_ENV=production node example.js",
-    "test": "npm run build:prod && standard && cross-env NODE_ENV=production tap test.js",
+    "test": "npm run build:prod && standard && cross-env NODE_ENV=production tap test.js && npm run typescript",
     "typescript": "tsc --project ./tsconfig.json"
   },
   "repository": {
