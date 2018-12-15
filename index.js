@@ -20,7 +20,11 @@ function fastifyReact (fastify, options, next) {
         })
         .after(() => {
           fastify.next('/_next/*',
-            (app, req, reply) => app.handleRequest(req.req, reply.res))
+            (app, req, reply) => app.handleRequest(req.req, reply.res)
+              .then(() => {
+                reply.sent = true
+              })
+          )
         })
       next()
     })
@@ -48,6 +52,9 @@ function fastifyReact (fastify, options, next) {
       }
 
       app.render(req.raw, reply.res, path, req.query, opts.next || {})
+        .then(() => {
+          reply.sent = true
+        })
     }
   }
 }
