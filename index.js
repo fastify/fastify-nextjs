@@ -52,9 +52,6 @@ function fastifyReact (fastify, options, next) {
       }
 
       app.render(req.raw, reply.res, path, req.query, opts.next || {})
-        .then(() => {
-          reply.sent = true
-        })
     }
   }
 }
