@@ -38,11 +38,14 @@
     "url": "https://github.com/fastify/fastify-react/issues"
   },
   "homepage": "https://github.com/fastify/fastify-react#readme",
-  "dependencies": {
-    "fastify-plugin": "^1.2.1",
+  "peerDependencies": {
     "next": "^7.0.2"
   },
+  "dependencies": {
+    "fastify-plugin": "^1.2.1"
+  },
   "devDependencies": {
+    "next": "^7.0.2",
     "cross-env": "^5.2.0",
     "fastify": "^1.13.1",
     "react": "^16.6.3",

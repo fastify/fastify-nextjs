@@ -8,7 +8,7 @@ React server side rendering support for Fastify with [Next](https://github.com/z
 
 ## Install
 ```
-npm i fastify-react --save
+npm i fastify-react next --save
 ```
 
 ## Usage
