@@ -4,7 +4,7 @@ const assert = require('assert')
 const fp = require('fastify-plugin')
 const Next = require('next')
 
-function fastifyReact (fastify, options, next) {
+function fastifyNext (fastify, options, next) {
   const app = Next(Object.assign(
     { dev: process.env.NODE_ENV !== 'production' },
     options
@@ -56,7 +56,7 @@ function fastifyReact (fastify, options, next) {
   }
 }
 
-module.exports = fp(fastifyReact, {
+module.exports = fp(fastifyNext, {
   fastify: '>=1.0.0',
-  name: 'fastify-react'
+  name: 'fastify-nextjs'
 })

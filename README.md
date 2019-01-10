@@ -1,14 +1,14 @@
-# fastify-react
+# fastify-nextjs
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/fastify/fastify-react.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/fastify/fastify-nextjs.svg)](https://greenkeeper.io/)
 
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  [![Build Status](https://travis-ci.org/fastify/fastify-react.svg?branch=master)](https://travis-ci.org/fastify/fastify-react)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  [![Build Status](https://travis-ci.org/fastify/fastify-nextjs.svg?branch=master)](https://travis-ci.org/fastify/fastify-nextjs)
 
 React server side rendering support for Fastify with [Next](https://github.com/zeit/next.js/#custom-server-and-routing) Framework.
 
 ## Install
 ```
-npm i fastify-react next --save
+npm i fastify-nextjs next --save
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ The plugin will expose the api `next` in Fastify that will handle the rendering 
 const fastify = require('fastify')()
 
 fastify
-  .register(require('fastify-react'))
+  .register(require('fastify-nextjs'))
   .after(() => {
     fastify.next('/hello')
   })
@@ -36,7 +36,7 @@ export default () => <div>hello world</div>
 ```
 If you need to pass [custom options](https://github.com/zeit/next.js/#custom-configuration) to `next` just pass them to register as second parameter.
 ```js
-fastify.register(require('fastify-react'), { dev: true })
+fastify.register(require('fastify-nextjs'), { dev: true })
 ```
 
 If you need to handle yourself the render part, just pass a callback to `next`:

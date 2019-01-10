@@ -1,6 +1,6 @@
 {
-  "name": "fastify-react",
-  "version": "3.0.0",
+  "name": "fastify-nextjs",
+  "version": "1.0.0",
   "description": "React server side rendering support for Fastify with Next",
   "main": "index.js",
   "engines": {
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fastify/fastify-react.git"
+    "url": "git+https://github.com/fastify/fastify-nextjs.git"
   },
   "keywords": [
     "fastify",
@@ -35,9 +35,9 @@
   "author": "Tomas Della Vedova - @delvedor (http://delved.org)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fastify/fastify-react/issues"
+    "url": "https://github.com/fastify/fastify-nextjs/issues"
   },
-  "homepage": "https://github.com/fastify/fastify-react#readme",
+  "homepage": "https://github.com/fastify/fastify-nextjs#readme",
   "peerDependencies": {
     "next": "^7.0.2"
   },
