@@ -1,4 +1,3 @@
-
 import {
   FastifyReply,
   FastifyRequest,
