@@ -45,6 +45,7 @@
     "fastify-plugin": "^1.2.1"
   },
   "devDependencies": {
+    "@types/next": "^8.0.1",
     "@types/node": "^11.9.3",
     "cross-env": "^5.2.0",
     "fastify": "^2.0.0",
