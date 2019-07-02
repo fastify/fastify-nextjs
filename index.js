@@ -5,10 +5,7 @@ const fp = require('fastify-plugin')
 const Next = require('next')
 
 function fastifyNext (fastify, options, next) {
-  const app = Next(Object.assign(
-    { dev: process.env.NODE_ENV !== 'production' },
-    options
-  ))
+  const app = Next(Object.assign({}, options, { dev: process.env.NODE_ENV !== 'production' }))
 
   app
     .prepare()

@@ -3,8 +3,28 @@
 const t = require('tap')
 const test = t.test
 const Fastify = require('fastify')
+const Next = require('next')
 const { join } = require('path')
 const { readFileSync } = require('fs')
+
+test('should construct next with proper environment', t => {
+  t.plan(2)
+
+  var app
+  var options
+  var dev
+
+  process.env.NODE_ENV = 'production'
+  dev = process.env.NODE_ENV !== 'production'
+  t.equal(dev, false)
+
+  app = Next(Object.assign({}, options, { dev }))
+  app.prepare()
+    .then(() => {
+      t.equal(app.dev, undefined)
+    })
+  app.close()
+})
 
 test('should return an html document', t => {
   t.plan(3)
