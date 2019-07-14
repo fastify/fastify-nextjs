@@ -230,7 +230,7 @@ test('should serve /_next/* static assets', t => {
   testNextAsset(t, fastify, `${pagePrefix}/_app.js`)
   testNextAsset(t, fastify, `${pagePrefix}/_error.js`)
 
-  let commonAssets = manifest.pages['/hello']
+  const commonAssets = manifest.pages['/hello']
   commonAssets.map(suffix => testNextAsset(t, fastify, `/_next/${suffix}`))
 
   fastify.close()
