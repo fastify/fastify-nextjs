@@ -1,5 +1,5 @@
-import fastify = require('fastify');
-import fastifyReact = require('./index');
+import fastify from 'fastify';
+import fastifyReact from './index';
 
 const app = fastify();
 
