@@ -60,5 +60,11 @@
     "ignore": [
       "tap"
     ]
+  },
+  "nyc": {
+    "all": false,
+    "include": [
+      "index.js"
+    ]
   }
 }
