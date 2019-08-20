@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/fastify/fastify-nextjs#readme",
   "peerDependencies": {
-    "next": "^8.0.0"
+    "next": "^9.0.4"
   },
   "dependencies": {
     "fastify-plugin": "^1.2.1"
