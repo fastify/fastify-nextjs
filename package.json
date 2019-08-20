@@ -56,11 +56,6 @@
     "tap": "^14.6.1",
     "typescript": "^3.2.2"
   },
-  "greenkeeper": {
-    "ignore": [
-      "tap"
-    ]
-  },
   "nyc": {
     "all": false,
     "include": [
