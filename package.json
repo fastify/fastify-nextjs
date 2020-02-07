@@ -39,18 +39,19 @@
   },
   "homepage": "https://github.com/fastify/fastify-nextjs#readme",
   "peerDependencies": {
-    "next": "^8.0.0"
+    "next": "^9.0.0"
   },
   "dependencies": {
     "fastify-plugin": "^1.2.1"
   },
   "devDependencies": {
-    "@types/next": "^8.0.1",
     "@types/node": "^12.12.7",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
     "cross-env": "^5.2.0",
     "fastify": "^2.0.0",
-    "next": "^8.0.0",
-    "react": "^16.6.3",
+    "next": "^9.2.1",
+    "react": "^16.12.0",
     "react-dom": "^16.6.3",
     "standard": "^14.0.2",
     "tap": "^12.6.5",

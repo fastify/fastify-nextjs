@@ -5,6 +5,7 @@
     "noEmit": true,
     "strict": true,
     "noImplicitAny": true,
+    "esModuleInterop": true
   },
   "files": [
     "./types.test.ts"

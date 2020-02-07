@@ -1,3 +1,5 @@
+/// <reference types="next" />
+
 import {
   FastifyReply,
   FastifyRequest,
@@ -6,8 +8,8 @@ import {
   RouteSchema,
 } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { DevServer } from 'next';
-import { UrlLike } from 'next/router';
+import DevServer from 'next/dist/server/next-dev-server';
+import { Router } from 'next/router';
 
 declare module 'fastify' {
   type FastifyNextCallback = (
@@ -27,7 +29,7 @@ declare module 'fastify' {
         | {
             method: HTTPMethod;
             schema: RouteSchema;
-            next: UrlLike;
+            next: Router;
           }
         | FastifyNextCallback,
       handle?: FastifyNextCallback
