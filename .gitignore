@@ -66,3 +66,6 @@ typings/
 # next stuff
 .next
 next-env.d.ts
+
+# npm package-lock.json
+package-lock.json
