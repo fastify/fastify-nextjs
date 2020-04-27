@@ -25,7 +25,7 @@ declare module 'fastify' {
   > {
     next(
       path: string,
-      opts:
+      opts?:
         | {
             method: HTTPMethod;
             schema: RouteSchema;
