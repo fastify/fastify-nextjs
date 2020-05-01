@@ -44,7 +44,7 @@ If you need to handle yourself the render part, just pass a callback to `next`:
 fastify.next('/hello', (app, req, reply) => {
   // your code
   // `app` is the Next instance
-  app.render(req.raw, reply.res, '/hello', req.query, {})
+  app.render(req.raw, reply.raw, '/hello', req.query, {})
 })
 ```
 ## Acknowledgements

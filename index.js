@@ -18,7 +18,7 @@ function fastifyNext (fastify, options, next) {
         })
         .after(() => {
           fastify.next('/_next/*',
-            (app, req, reply) => handleNextRequests(req.req, reply.res)
+            (app, req, reply) => handleNextRequests(req.raw, reply.raw)
               .then(() => {
                 reply.sent = true
               })
