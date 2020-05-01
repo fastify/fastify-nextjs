@@ -4,9 +4,8 @@ import {
   FastifyReply,
   FastifyRequest,
   FastifyPlugin,
-  HTTPMethod,
-  Plugin,
-  RouteSchema,
+  FastifySchema,
+  HTTPMethods
 } from 'fastify';
 import DevServer from 'next/dist/server/next-dev-server';
 import { Router } from 'next/router';
@@ -23,8 +22,8 @@ declare module 'fastify' {
       path: string,
       opts?:
         | {
-            method: HTTPMethod;
-            schema: RouteSchema;
+            method: HTTPMethods;
+            schema: FastifySchema;
             next: Router;
           }
         | FastifyNextCallback,
