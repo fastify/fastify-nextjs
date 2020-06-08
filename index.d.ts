@@ -3,32 +3,27 @@
 import {
   FastifyReply,
   FastifyRequest,
-  HTTPMethod,
-  Plugin,
-  RouteSchema,
+  FastifyPlugin,
+  FastifySchema,
+  HTTPMethods
 } from 'fastify';
-import { IncomingMessage, Server, ServerResponse } from 'http';
 import DevServer from 'next/dist/server/next-dev-server';
 import { Router } from 'next/router';
 
 declare module 'fastify' {
   type FastifyNextCallback = (
     app: DevServer,
-    req: FastifyRequest<any>,
-    reply: FastifyReply<any>
+    req: FastifyRequest,
+    reply: FastifyReply
   ) => Promise<void>;
 
-  interface FastifyInstance<
-    HttpServer = Server,
-    HttpRequest = IncomingMessage,
-    HttpResponse = ServerResponse
-  > {
+  interface FastifyInstance {
     next(
       path: string,
       opts?:
         | {
-            method: HTTPMethod;
-            schema: RouteSchema;
+            method: HTTPMethods;
+            schema: FastifySchema;
             next: Router;
           }
         | FastifyNextCallback,
@@ -37,11 +32,6 @@ declare module 'fastify' {
   }
 }
 
-declare const fastifyReact: Plugin<
-  Server,
-  IncomingMessage,
-  ServerResponse,
-  { [key: string]: any }
->;
+declare const fastifyReact: FastifyPlugin<{ [key: string]: any }>;
 
-export = fastifyReact;
+export default fastifyReact;

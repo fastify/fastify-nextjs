@@ -78,7 +78,7 @@ test('should support a custom handler', t => {
     .register(require('./index'))
     .after(() => {
       fastify.next('/hello', (app, req, reply) => {
-        app.render(req.req, reply.res, '/hello', req.query, {})
+        app.render(req.raw, reply.raw, '/hello', req.query, {})
       })
     })
 
