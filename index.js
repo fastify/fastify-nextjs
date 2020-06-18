@@ -33,7 +33,6 @@ function fastifyNext (fastify, options, next) {
     assert(typeof path === 'string', 'path must be a string')
     if (opts.method) { assert(typeof opts.method === 'string', 'options.method must be a string') }
     if (opts.schema) { assert(typeof opts.schema === 'object', 'options.schema must be an object') }
-    if (opts.next) { assert(typeof opts.next === 'object', 'options.next must be an object') }
     if (callback) { assert(typeof callback === 'function', 'callback must be a function') }
 
     const method = opts.method || 'get'

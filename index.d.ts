@@ -24,7 +24,6 @@ declare module 'fastify' {
         | {
             method: HTTPMethods;
             schema: FastifySchema;
-            next: Router;
           }
         | FastifyNextCallback,
       handle?: FastifyNextCallback
