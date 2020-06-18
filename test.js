@@ -236,6 +236,28 @@ test('should serve /_next/* static assets', t => {
   fastify.close()
 })
 
+test('should return a json data on api route', t => {
+  t.plan(3)
+
+  const fastify = Fastify()
+  fastify
+    .register(require('./index'))
+    .after(() => {
+      fastify.next('/api/*')
+    })
+
+  fastify.inject({
+    url: '/api/user',
+    method: 'GET'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 200)
+    t.equal(res.headers['content-type'], 'application/json')
+  })
+
+  fastify.close()
+})
+
 function testNextAsset (t, fastify, url) {
   fastify.inject({ url, method: 'GET' }, (err, res) => {
     t.error(err)
