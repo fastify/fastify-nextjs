@@ -17,12 +17,7 @@ function fastifyNext (fastify, options, next) {
           app.close()
         })
         .after(() => {
-          fastify.next('/_next/*',
-            (app, req, reply) => handleNextRequests(req.raw, reply.raw)
-              .then(() => {
-                reply.sent = true
-              })
-          )
+          fastify.next('/_next/*')
         })
       next()
     })
@@ -49,7 +44,7 @@ function fastifyNext (fastify, options, next) {
         return callback(app, req, reply)
       }
 
-      app.render(req.raw, reply.res, path, req.query, opts.next || {})
+      return handleNextRequests(req.raw, reply.raw)
     }
   }
 }
