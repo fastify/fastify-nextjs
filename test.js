@@ -30,6 +30,8 @@ test('should return an html document', t => {
   t.plan(3)
 
   const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
   fastify
     .register(require('./index'))
     .after(() => {
@@ -44,14 +46,14 @@ test('should return an html document', t => {
     t.equal(res.statusCode, 200)
     t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
   })
-
-  fastify.close()
 })
 
 test('should support different methods', t => {
   t.plan(3)
 
   const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
   fastify
     .register(require('./index'))
     .after(() => {
@@ -66,14 +68,14 @@ test('should support different methods', t => {
     t.equal(res.statusCode, 200)
     t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
   })
-
-  fastify.close()
 })
 
 test('should support a custom handler', t => {
   t.plan(3)
 
   const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
   fastify
     .register(require('./index'))
     .after(() => {
@@ -90,14 +92,14 @@ test('should support a custom handler', t => {
     t.equal(res.statusCode, 200)
     t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
   })
-
-  fastify.close()
 })
 
 test('should return 404 on undefined route', t => {
   t.plan(2)
 
   const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
   fastify
     .register(require('./index'))
     .after(() => {
@@ -111,8 +113,6 @@ test('should return 404 on undefined route', t => {
     t.error(err)
     t.equal(res.statusCode, 404)
   })
-
-  fastify.close()
 })
 
 test('should throw if path is not a string', t => {
@@ -224,6 +224,8 @@ test('should serve /_next/* static assets', t => {
       fastify.next('/hello')
     })
 
+  t.tearDown(() => fastify.close())
+
   const pagePrefix = `/_next/static/${buildId}/pages`
 
   testNextAsset(t, fastify, `${pagePrefix}/hello.js`)
@@ -232,8 +234,6 @@ test('should serve /_next/* static assets', t => {
 
   const commonAssets = manifest.pages['/hello']
   commonAssets.map(suffix => testNextAsset(t, fastify, `/_next/${suffix}`))
-
-  fastify.close()
 })
 
 test('should return a json data on api route', t => {
@@ -246,6 +246,8 @@ test('should return a json data on api route', t => {
       fastify.next('/api/*')
     })
 
+  t.tearDown(() => fastify.close())
+
   fastify.inject({
     url: '/api/user',
     method: 'GET'
@@ -254,8 +256,6 @@ test('should return a json data on api route', t => {
     t.equal(res.statusCode, 200)
     t.equal(res.headers['content-type'], 'application/json')
   })
-
-  fastify.close()
 })
 
 function testNextAsset (t, fastify, url) {
