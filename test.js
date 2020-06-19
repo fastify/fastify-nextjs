@@ -172,25 +172,6 @@ test('should throw if opts.schema is not an object', t => {
   fastify.close()
 })
 
-test('should throw if opts.next is not an object', t => {
-  t.plan(2)
-
-  const fastify = Fastify()
-  fastify
-    .register(require('./index'))
-    .after(err => {
-      t.error(err)
-      try {
-        fastify.next('/hello', { next: 1 })
-        t.fail()
-      } catch (e) {
-        t.equal(e.message, 'options.next must be an object')
-      }
-    })
-
-  fastify.close()
-})
-
 test('should throw if callback is not a function', t => {
   t.plan(2)
 
