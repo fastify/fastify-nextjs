@@ -23,7 +23,7 @@ fastify
 
 fastify.listen(3000, err => {
   if (err) throw err
-  console.log('Server listenging on http://localhost:3000')
+  console.log('Server listening on http://localhost:3000')
 })
 ```
 
@@ -37,7 +37,7 @@ If you need to pass [custom options](https://github.com/zeit/next.js/#custom-con
 fastify.register(require('fastify-nextjs'), { dev: true })
 ```
 
-If you need to handle yourself the render part, just pass a callback to `next`:
+If you need to handle the render part yourself, just pass a callback to `next`:
 ```js
 fastify.next('/hello', (app, req, reply) => {
   // your code
