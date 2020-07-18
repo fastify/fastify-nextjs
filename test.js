@@ -6,6 +6,7 @@ const Fastify = require('fastify')
 const Next = require('next')
 const { join } = require('path')
 const { readFileSync } = require('fs')
+const pino = require('pino')
 
 test('should construct next with proper environment', t => {
   t.plan(2)
@@ -236,6 +237,41 @@ test('should return a json data on api route', t => {
     t.error(err)
     t.equal(res.statusCode, 200)
     t.equal(res.headers['content-type'], 'application/json')
+  })
+})
+
+test('should not log any errors', t => {
+  t.plan(5)
+
+  let showedError = false
+  const logger = pino({
+    level: 'error',
+    formatters: {
+      log: (obj) => {
+        showedError = true
+        return obj
+      }
+    }
+  })
+
+  const fastify = Fastify({
+    logger
+  })
+
+  fastify
+    .register(require('./index')).after(() => {
+      fastify.next('/hello')
+    })
+
+  fastify.inject({
+    url: '/hello',
+    method: 'GET'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 200)
+    t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+    t.includes(res.payload, '<div>hello world</div>')
+    t.equal(showedError, false, 'Should not show any error')
   })
 })
 
