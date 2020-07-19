@@ -44,6 +44,9 @@ function fastifyNext (fastify, options, next) {
       }
 
       return handleNextRequests(req.raw, reply.raw)
+        .then(() => {
+          reply.sent = true
+        })
     }
   }
 }
