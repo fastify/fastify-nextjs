@@ -3,7 +3,9 @@ import fastifyReact from './index';
 
 const app = fastify();
 
-app.register(fastifyReact).after(() => {
+app.register(fastifyReact, {
+  logLevel: "error"
+}).after(() => {
   app.next('/a');
 
   app.next('/*', (nextApp, req, reply) => {

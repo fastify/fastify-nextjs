@@ -275,6 +275,63 @@ test('should not log any errors', t => {
   })
 })
 
+test('should respect plugin logLevel', t => {
+  t.plan(9)
+
+  let didLog = false
+  const logger = pino({
+    formatters: {
+      log: (obj) => {
+        didLog = true
+        return obj
+      }
+    }
+  })
+
+  const fastify = Fastify({
+    logger
+  })
+
+  fastify
+    .register(require('./index'), {
+      logLevel: 'error'
+    })
+    .after(() => {
+      fastify.next('/hello')
+
+      fastify.next('/api/user', (nextApp, req, reply) => {
+        return nextApp
+          .getRequestHandler()(req.raw, reply.raw)
+          .then(() => {
+            reply.sent = true
+          })
+      })
+    })
+
+  t.tearDown(() => fastify.close())
+
+  fastify.inject({
+    url: '/hello',
+    method: 'GET'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 200)
+    t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+    t.includes(res.payload, '<div>hello world</div>')
+    t.equal(didLog, false)
+  })
+
+  fastify.inject({
+    url: '/api/user',
+    method: 'GET'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 200)
+    t.equal(res.headers['content-type'], 'application/json')
+    t.equal(didLog, false)
+  })
+})
+
 function testNextAsset (t, fastify, url) {
   fastify.inject({ url, method: 'GET' }, (err, res) => {
     t.error(err)

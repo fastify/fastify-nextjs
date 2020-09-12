@@ -24,10 +24,14 @@ function fastifyNext (fastify, options, next) {
     .catch(err => next(err))
 
   function route (path, opts, callback) {
-    opts = opts || {}
+    opts = opts || {
+      logLevel: options.logLevel
+    }
     if (typeof opts === 'function') {
       callback = opts
-      opts = {}
+      opts = {
+        logLevel: options.logLevel
+      }
     }
 
     assert(typeof path === 'string', 'path must be a string')
