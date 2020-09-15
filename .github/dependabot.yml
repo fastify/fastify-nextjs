@@ -1,0 +1,16 @@
+version: 2
+updates:
+- package-ecosystem: docker
+  directory: /
+  schedule:
+    interval: weekly
+- package-ecosystem: npm
+  directory: /
+  schedule:
+    interval: daily
+  ignore:
+  - dependency-name: aws*
+  - dependency-name: express
+    versions:
+    - 4.x
+    - 5.x
