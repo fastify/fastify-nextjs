@@ -1,0 +1,38 @@
+name: Node CI
+"on":
+  push:
+    paths-ignore:
+    - '**.md'
+    - docs/**
+  pull_request:
+    paths-ignore:
+    - '**.md'
+    - docs/**
+env:
+  A: 4c362164-ff51-476d-a0ce-480e065a0825
+  B: fastify/fastify-nextjs
+  CI: "true"
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version:
+        - 12.x
+        - 14.x
+        os:
+        - ubuntu-latest
+    name: Node ${{ matrix.node-version }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      name: Use Node.js ${{ matrix.node-version }}
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: install
+      run: |
+        yarn install
+    - name: test
+      run: yarn test
+    needs:
+    - a
