@@ -1,0 +1,1 @@
+# Ghconfig support
