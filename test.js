@@ -4,8 +4,6 @@ const t = require('tap')
 const test = t.test
 const Fastify = require('fastify')
 const Next = require('next')
-const { join } = require('path')
-const { readFileSync } = require('fs')
 const pino = require('pino')
 
 test('should construct next with proper environment', t => {
@@ -19,7 +17,7 @@ test('should construct next with proper environment', t => {
   dev = process.env.NODE_ENV !== 'production'
   t.equal(dev, false)
 
-  app = Next(Object.assign({}, options, { dev }))
+  app = Next(Object.assign({}, { dev }, options))
   app.prepare()
     .then(() => {
       t.equal(app.dev, undefined)
@@ -193,9 +191,8 @@ test('should throw if callback is not a function', t => {
 })
 
 test('should serve /_next/* static assets', t => {
-  t.plan(18)
+  t.plan(12)
 
-  const buildId = readFileSync(join(__dirname, '.next', 'BUILD_ID'), 'utf-8')
   const manifest = require('./.next/build-manifest.json')
 
   const fastify = Fastify()
@@ -207,12 +204,6 @@ test('should serve /_next/* static assets', t => {
     })
 
   t.tearDown(() => fastify.close())
-
-  const pagePrefix = `/_next/static/${buildId}/pages`
-
-  testNextAsset(t, fastify, `${pagePrefix}/hello.js`)
-  testNextAsset(t, fastify, `${pagePrefix}/_app.js`)
-  testNextAsset(t, fastify, `${pagePrefix}/_error.js`)
 
   const commonAssets = manifest.pages['/hello']
   commonAssets.map(suffix => testNextAsset(t, fastify, `/_next/${suffix}`))
