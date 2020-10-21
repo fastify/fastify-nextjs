@@ -43,6 +43,10 @@ function fastifyNext (fastify, options, next) {
     this[method.toLowerCase()](path, opts, handler)
 
     function handler (req, reply) {
+      for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
+        reply.raw.setHeader(headerName, headerValue)
+      }
+
       if (callback) {
         return callback(app, req, reply)
       }

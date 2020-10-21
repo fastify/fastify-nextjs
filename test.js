@@ -323,6 +323,35 @@ test('should respect plugin logLevel', t => {
   })
 })
 
+test('should preserve Fastify response headers set by plugins and hooks', t => {
+  t.plan(3)
+
+  const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
+  fastify
+    .register(require('./index'))
+    .after(() => {
+      fastify.addHook('onRequest', (req, reply, done) => {
+        reply.header('test-header', 'hello')
+        done()
+      })
+
+      fastify.next('/hello', (app, req, reply) => {
+        app.render(req.raw, reply.raw, '/hello', req.query, {})
+      })
+    })
+
+  fastify.inject({
+    url: '/hello',
+    method: 'GET'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 200)
+    t.equal(res.headers['test-header'], 'hello')
+  })
+})
+
 function testNextAsset (t, fastify, url) {
   fastify.inject({ url, method: 'GET' }, (err, res) => {
     t.error(err)
