@@ -2,7 +2,7 @@
 
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  ![CI workflow](https://github.com/fastify/fastify-nextjs/workflows/CI%20workflow/badge.svg)
 
-React server side rendering support for Fastify with [Next](https://github.com/zeit/next.js/#custom-server-and-routing) Framework.
+React server side rendering support for Fastify with [Next](https://nextjs.org/docs/advanced-features/custom-server) Framework.
 
 ## Install
 ```
@@ -27,12 +27,12 @@ fastify.listen(3000, err => {
 })
 ```
 
-All you server rendered pages must be saved in the folder `pages`, as you can see in the [next documentation](https://github.com/zeit/next.js/#custom-server-and-routing).
+All you server rendered pages must be saved in the folder `pages`, as you can see in the [next documentation](https://nextjs.org/docs/advanced-features/custom-server).
 ```js
 // /pages/hello.js
 export default () => <div>hello world</div>
 ```
-If you need to pass [custom options](https://github.com/zeit/next.js/#custom-configuration) to `next` just pass them to register as second parameter.
+If you need to pass [custom options](https://nextjs.org/docs/advanced-features/custom-server) to `next` just pass them to register as second parameter.
 ```js
 fastify.register(require('fastify-nextjs'), { dev: true })
 ```
