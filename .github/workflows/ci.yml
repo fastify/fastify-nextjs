@@ -7,12 +7,34 @@ jobs:
       matrix:
         node-version: [10.x, 12.x, 14.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install Dependencies
-      run: npm install --ignore-scripts
-    - name: Test
-      run: npm test
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: npm install --ignore-scripts
+      - name: Test
+        run: npm test
+
+  automerge:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dependabot Auto Merge
+        uses: actions/github-script@v3
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        with:
+          github-token: ${{secrets.github_token}}
+          script: |
+            github.pulls.createReview({
+              owner: context.payload.repository.owner.login,
+              repo: context.payload.repository.name,
+              pull_number: context.payload.pull_request.number,
+              event: 'APPROVE'
+            })
+            github.pulls.merge({
+              owner: context.payload.repository.owner.login,
+              repo: context.payload.repository.name,
+              pull_number: context.payload.pull_request.number
+            })
