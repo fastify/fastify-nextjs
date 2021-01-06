@@ -5,19 +5,20 @@ const test = t.test
 const Fastify = require('fastify')
 const Next = require('next')
 const pino = require('pino')
+const proxyquire = require('proxyquire')
+const sinon = require('sinon')
 
 test('should construct next with proper environment', t => {
   t.plan(2)
 
-  var app
-  var options
-  var dev
-
   process.env.NODE_ENV = 'production'
-  dev = process.env.NODE_ENV !== 'production'
+
+  let options
+  const dev = process.env.NODE_ENV !== 'production'
+
   t.equal(dev, false)
 
-  app = Next(Object.assign({}, { dev }, options))
+  const app = Next(Object.assign({}, { dev }, options))
   app.prepare()
     .then(() => {
       t.equal(app.dev, undefined)
@@ -349,6 +350,102 @@ test('should preserve Fastify response headers set by plugins and hooks', t => {
     t.error(err)
     t.equal(res.statusCode, 200)
     t.equal(res.headers['test-header'], 'hello')
+  })
+})
+
+test('should handle Next initialization errors', t => {
+  t.plan(1)
+
+  const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
+  const error = new Error('boom')
+
+  const plugin = proxyquire('./', {
+    next: function () {
+      return {
+        getRequestHandler () { },
+        prepare () { return Promise.reject(error) }
+      }
+    }
+  })
+
+  fastify
+    .register(plugin)
+    .ready(err => {
+      t.sameStrict(err, error)
+    })
+})
+
+test('should not register under-pressure by default', t => {
+  const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
+  const registerSpy = sinon.spy(fastify, 'register')
+  const underPressureStub = sinon.stub().resolves()
+
+  const plugin = proxyquire('./index', {
+    'under-pressure': underPressureStub
+  })
+
+  fastify.register(plugin)
+
+  sinon.assert.neverCalledWith(registerSpy, underPressureStub)
+
+  t.end()
+})
+
+test('should register under-pressure with default options when underPressure: true', async t => {
+  const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
+  const registerSpy = sinon.spy(fastify, 'register')
+  const underPressureStub = sinon.stub().resolves()
+
+  const plugin = proxyquire('./index', {
+    'under-pressure': underPressureStub
+  })
+
+  await fastify.register(plugin, { underPressure: true })
+
+  sinon.assert.calledWith(registerSpy, underPressureStub, {})
+
+  t.end()
+})
+
+test('should register under-pressure with provided options when it is an object', async t => {
+  const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
+  const registerSpy = sinon.spy(fastify, 'register')
+  const underPressureStub = sinon.stub().resolves()
+
+  const plugin = proxyquire('./index', {
+    'under-pressure': underPressureStub
+  })
+
+  await fastify.register(plugin, { underPressure: { some: 'option' } })
+
+  sinon.assert.calledWith(registerSpy, underPressureStub, { some: 'option' })
+
+  t.end()
+})
+
+test('should register under-pressure with underPressure: true - and expose route if configured', t => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
+  fastify
+    .register(require('./index'), { underPressure: { exposeStatusRoute: true } })
+
+  fastify.inject({
+    url: '/status',
+    method: 'GET'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 200)
   })
 })
 

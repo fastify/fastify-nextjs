@@ -31,6 +31,6 @@ declare module 'fastify' {
   }
 }
 
-declare const fastifyReact: FastifyPlugin<{ [key: string]: any }>;
+declare const fastifyNext: FastifyPlugin<{ [key: string]: any }>;
 
-export default fastifyReact;
+export default fastifyNext;
