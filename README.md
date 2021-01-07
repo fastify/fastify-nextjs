@@ -45,10 +45,36 @@ fastify.next('/hello', (app, req, reply) => {
   app.render(req.raw, reply.raw, '/hello', req.query, {})
 })
 ```
+
+### under-pressure
+
+The plugin includes [under-pressure](https://github.com/fastify/under-pressure), which can be configured by providing an `underPressure` property to the plugin options. 
+
+Using `under-pressure` allows implementing a circuit breaker which returns an error when the health metrics are not respected. 
+Because React server side rendering is a blocking operation for the Node.js server, returning an error to the client allows signalling that the server is under too much load.
+
+The available options are the same as those accepted by `under-pressure`.
+
+For example:
+
+```js
+fastify.register(require('fastify-nextjs'), { 
+  underPressure: {
+    exposeStatusRoute: true
+  }
+})
+```
+
+- `underPressure` - `bool|object`
+
+  - (default) when false, `under-pressure` is not registered
+  - when true, `under-pressure` is registered with default options
+  - when it is an object, `under-pressure` is registered with the provided options
+
 ## Acknowledgements
 
 This project is kindly sponsored by:
-- [nearForm](http://nearform.com)
+- [NearForm](http://nearform.com)
 - [LetzDoIt](http://www.letzdoitapp.com/)
 
 ## License

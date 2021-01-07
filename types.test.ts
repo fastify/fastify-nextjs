@@ -1,9 +1,9 @@
 import fastify from 'fastify';
-import fastifyReact from './index';
+import fastifyNext from './index';
 
 const app = fastify();
 
-app.register(fastifyReact, {
+app.register(fastifyNext, {
   logLevel: "error"
 }).after(() => {
   app.next('/a');
