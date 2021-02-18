@@ -6,7 +6,7 @@ React server side rendering support for Fastify with [Next](https://nextjs.org/d
 
 ## Install
 ```
-npm i fastify-nextjs next --save
+npm i fastify-nextjs next react react-dom --save
 ```
 
 ## Usage
