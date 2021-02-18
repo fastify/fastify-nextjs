@@ -46,6 +46,12 @@ fastify.next('/hello', (app, req, reply) => {
 })
 ```
 
+If you need to handle POST routes, you can define the HTTP method:
+```js
+fastify.next('/api/*', { method: 'GET' });
+fastify.next('/api/*', { method: 'POST' });
+```
+
 ### under-pressure
 
 The plugin includes [under-pressure](https://github.com/fastify/under-pressure), which can be configured by providing an `underPressure` property to the plugin options. 
