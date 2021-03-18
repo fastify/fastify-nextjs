@@ -414,19 +414,18 @@ test('should register under-pressure with default options when underPressure: tr
 })
 
 test('should register under-pressure with provided options when it is an object', async t => {
+  t.plan(1)
+
   const fastify = Fastify()
   t.tearDown(() => fastify.close())
 
-  const registerSpy = sinon.spy(fastify, 'register')
-  const underPressureStub = sinon.stub().resolves()
-
   const plugin = proxyquire('./index', {
-    'under-pressure': underPressureStub
+    'under-pressure': async function (app, opts) {
+      t.deepEqual(opts, { some: 'option' })
+    }
   })
 
   await fastify.register(plugin, { underPressure: { some: 'option' } })
-
-  sinon.assert.calledWith(registerSpy, underPressureStub, { some: 'option' })
 
   t.end()
 })
