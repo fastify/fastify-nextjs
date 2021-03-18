@@ -19,8 +19,7 @@ function fastifyNext (fastify, options, next) {
     .then(() => {
       fastify
         .decorate('next', route.bind(fastify))
-        .decorateReply('nextRender', null)
-        .addHook('onRequest', render)
+        .decorateReply('nextRender', render)
         .addHook('onClose', function () {
           return app.close()
         })
@@ -66,24 +65,25 @@ function fastifyNext (fastify, options, next) {
     }
   }
 
-  async function render (request, reply) {
-    reply.nextRender = async path => {
-      assert(typeof path === 'string', 'path must be a string')
+  async function render (path) {
+    assert(typeof path === 'string', 'path must be a string')
 
-      // set custom headers as next will finish the request
-      for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
-        // Fastify sets content-length to `undefined` for error handlers, which is an invalid value
-        if (headerName === 'content-length' && headerValue === undefined) {
-          continue
-        }
+    const reply = this
+    const { request } = reply
 
-        reply.raw.setHeader(headerName, headerValue)
+    // set custom headers as next will finish the request
+    for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
+      // Fastify sets content-length to `undefined` for error handlers, which is an invalid value
+      if (headerName === 'content-length' && headerValue === undefined) {
+        continue
       }
 
-      await app.render(request.raw, reply.raw, path, request.query)
-
-      reply.sent = true
+      reply.raw.setHeader(headerName, headerValue)
     }
+
+    await app.render(request.raw, reply.raw, path, request.query)
+
+    reply.sent = true
   }
 }
 
