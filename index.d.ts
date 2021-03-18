@@ -3,12 +3,11 @@
 import {
   FastifyReply,
   FastifyRequest,
-  FastifyPlugin,
+  FastifyPluginCallback,
   FastifySchema,
   HTTPMethods
 } from 'fastify';
 import DevServer from 'next/dist/server/next-dev-server';
-import { Router } from 'next/router';
 
 declare module 'fastify' {
   type FastifyNextCallback = (
@@ -29,8 +28,12 @@ declare module 'fastify' {
       handle?: FastifyNextCallback
     ): void;
   }
+
+  interface FastifyReply {
+    nextRender(path: string): Promise<void>;
+  }
 }
 
-declare const fastifyNext: FastifyPlugin<{ [key: string]: any }>;
+declare const fastifyNext: FastifyPluginCallback<{ [key: string]: any }>;
 
 export default fastifyNext;

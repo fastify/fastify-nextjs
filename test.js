@@ -449,6 +449,65 @@ test('should register under-pressure with underPressure: true - and expose route
   })
 })
 
+test('should decorate with next render function', async t => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
+  await fastify.register(require('./index'))
+
+  fastify.addHook('onRequest', (req, reply, done) => {
+    reply.header('test-header', 'hello')
+    done()
+  })
+
+  fastify.get('/hello', (req, reply) => {
+    return reply.nextRender('/hello')
+  })
+
+  const res = await fastify.inject({
+    url: '/hello',
+    method: 'GET'
+  })
+
+  t.equal(res.statusCode, 200)
+  t.equal(res.headers['test-header'], 'hello')
+})
+
+test('should let next render error page', async t => {
+  t.plan(4)
+
+  const fastify = Fastify()
+  t.tearDown(() => fastify.close())
+
+  await fastify.register(require('./index'))
+
+  fastify.addHook('onRequest', (req, reply, done) => {
+    reply.header('test-header', 'hello')
+    done()
+  })
+
+  fastify.get('/hello', (req, reply) => {
+    throw new Error('boom')
+  })
+
+  fastify.setErrorHandler((err, req, reply) => {
+    reply.status(err.statusCode || 500)
+    return reply.nextRender('/hello')
+  })
+
+  const res = await fastify.inject({
+    url: '/hello',
+    method: 'GET'
+  })
+
+  t.equal(res.statusCode, 500)
+  t.equal(res.headers['test-header'], 'hello')
+  t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+  t.includes(res.payload, '<div>hello world</div>')
+})
+
 function testNextAsset (t, fastify, url) {
   fastify.inject({ url, method: 'GET' }, (err, res) => {
     t.error(err)
