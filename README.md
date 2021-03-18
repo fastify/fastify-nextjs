@@ -46,6 +46,15 @@ fastify.next('/hello', (app, req, reply) => {
 })
 ```
 
+If you need to render with Next from within a custom handler (such as an error handler), use `reply.renderNext`
+
+```js
+app.setErrorHandler((err, req, reply) => {
+  reply.status(err.statusCode || 500)
+  return reply.nextRender('/_error')
+})
+```
+
 If you need to handle POST routes, you can define the HTTP method:
 ```js
 fastify.next('/api/*', { method: 'GET' });

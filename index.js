@@ -19,8 +19,29 @@ function fastifyNext (fastify, options, next) {
     .then(() => {
       fastify
         .decorate('next', route.bind(fastify))
+        .decorateReply('nextRender', null)
+        .addHook('onRequest', (request, reply, done) => {
+          reply.nextRender = path => {
+            assert(typeof path === 'string', 'path must be a string')
+
+            for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
+              if (headerName === 'content-length' && headerValue === undefined) {
+                continue
+              }
+
+              reply.raw.setHeader(headerName, headerValue)
+            }
+
+            return app.render(request.raw, reply.raw, path, request.query)
+              .then(() => {
+                reply.sent = true
+              })
+          }
+
+          done()
+        })
         .addHook('onClose', function () {
-          app.close()
+          return app.close()
         })
         .after(() => {
           fastify.next('/_next/*')
