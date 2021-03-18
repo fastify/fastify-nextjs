@@ -432,6 +432,7 @@ test('should register under-pressure with provided options when it is an object'
 
 test('should register under-pressure with underPressure: true - and expose route if configured', t => {
   t.plan(2)
+  t.setTimeout(60 * 1000)
 
   const fastify = Fastify()
   t.tearDown(() => fastify.close())
