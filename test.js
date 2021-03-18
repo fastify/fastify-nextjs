@@ -437,8 +437,15 @@ test('should register under-pressure with underPressure: true - and expose route
   const fastify = Fastify()
   t.tearDown(() => fastify.close())
 
-  fastify
-    .register(require('./index'), { underPressure: { exposeStatusRoute: true } })
+  fastify.register(require('./index'), {
+    underPressure: {
+      exposeStatusRoute: true,
+      maxEventLoopDelay: 1000,
+      maxHeapUsedBytes: 100000000,
+      maxRssBytes: 100000000,
+      maxEventLoopUtilization: 0.98
+    }
+  })
 
   fastify.inject({
     url: '/status',
