@@ -427,7 +427,6 @@ test('should register under-pressure with provided options when it is an object'
 
 test('should register under-pressure with underPressure: true - and expose route if configured', t => {
   t.plan(2)
-  t.setTimeout(60 * 1000)
 
   const fastify = Fastify()
   t.tearDown(() => fastify.close())
@@ -435,7 +434,7 @@ test('should register under-pressure with underPressure: true - and expose route
   fastify.register(require('./index'), {
     underPressure: {
       exposeStatusRoute: true,
-      maxEventLoopDelay: 1000,
+      maxEventLoopDelay: 10000,
       maxHeapUsedBytes: 100000000,
       maxRssBytes: 100000000,
       maxEventLoopUtilization: 0.98
