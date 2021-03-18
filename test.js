@@ -450,7 +450,7 @@ test('should register under-pressure with underPressure: true - and expose route
 })
 
 test('should decorate with next render function', async t => {
-  t.plan(3)
+  t.plan(2)
 
   const fastify = Fastify()
   t.tearDown(() => fastify.close())
@@ -466,18 +466,17 @@ test('should decorate with next render function', async t => {
     return reply.nextRender('/hello')
   })
 
-  fastify.inject({
+  const res = await fastify.inject({
     url: '/hello',
     method: 'GET'
-  }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 200)
-    t.equal(res.headers['test-header'], 'hello')
   })
+
+  t.equal(res.statusCode, 200)
+  t.equal(res.headers['test-header'], 'hello')
 })
 
 test('should let next render error page', async t => {
-  t.plan(5)
+  t.plan(4)
 
   const fastify = Fastify()
   t.tearDown(() => fastify.close())
@@ -498,16 +497,15 @@ test('should let next render error page', async t => {
     return reply.nextRender('/hello')
   })
 
-  fastify.inject({
+  const res = await fastify.inject({
     url: '/hello',
     method: 'GET'
-  }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 500)
-    t.equal(res.headers['test-header'], 'hello')
-    t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
-    t.includes(res.payload, '<div>hello world</div>')
   })
+
+  t.equal(res.statusCode, 500)
+  t.equal(res.headers['test-header'], 'hello')
+  t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+  t.includes(res.payload, '<div>hello world</div>')
 })
 
 function testNextAsset (t, fastify, url) {
