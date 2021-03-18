@@ -449,24 +449,22 @@ test('should register under-pressure with underPressure: true - and expose route
   })
 })
 
-test('should decorate with next render function', t => {
+test('should decorate with next render function', async t => {
   t.plan(3)
 
   const fastify = Fastify()
   t.tearDown(() => fastify.close())
 
-  fastify
-    .register(require('./index'))
-    .after(() => {
-      fastify.addHook('onRequest', (req, reply, done) => {
-        reply.header('test-header', 'hello')
-        done()
-      })
+  await fastify.register(require('./index'))
 
-      fastify.get('/hello', (req, reply) => {
-        return reply.nextRender('/hello')
-      })
-    })
+  fastify.addHook('onRequest', (req, reply, done) => {
+    reply.header('test-header', 'hello')
+    done()
+  })
+
+  fastify.get('/hello', (req, reply) => {
+    return reply.nextRender('/hello')
+  })
 
   fastify.inject({
     url: '/hello',
@@ -478,29 +476,27 @@ test('should decorate with next render function', t => {
   })
 })
 
-test('should let next render error page', t => {
+test('should let next render error page', async t => {
   t.plan(5)
 
   const fastify = Fastify()
   t.tearDown(() => fastify.close())
 
-  fastify
-    .register(require('./index'))
-    .after(() => {
-      fastify.addHook('onRequest', (req, reply, done) => {
-        reply.header('test-header', 'hello')
-        done()
-      })
+  await fastify.register(require('./index'))
 
-      fastify.get('/hello', (req, reply) => {
-        throw new Error('boom')
-      })
+  fastify.addHook('onRequest', (req, reply, done) => {
+    reply.header('test-header', 'hello')
+    done()
+  })
 
-      fastify.setErrorHandler((err, req, reply) => {
-        reply.status(err.statusCode || 500)
-        return reply.nextRender('/hello')
-      })
-    })
+  fastify.get('/hello', (req, reply) => {
+    throw new Error('boom')
+  })
+
+  fastify.setErrorHandler((err, req, reply) => {
+    reply.status(err.statusCode || 500)
+    return reply.nextRender('/hello')
+  })
 
   fastify.inject({
     url: '/hello',
