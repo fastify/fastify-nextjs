@@ -20,11 +20,13 @@ function fastifyNext (fastify, options, next) {
       fastify
         .decorate('next', route.bind(fastify))
         .decorateReply('nextRender', null)
-        .addHook('onRequest', (request, reply, done) => {
-          reply.nextRender = path => {
+        .addHook('onRequest', async (request, reply) => {
+          reply.nextRender = async path => {
             assert(typeof path === 'string', 'path must be a string')
 
+            // set custom headers as next will finish the request
             for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
+              // Fastify sets content-length to `undefined` for error handlers, which is an invalid value
               if (headerName === 'content-length' && headerValue === undefined) {
                 continue
               }
@@ -32,13 +34,10 @@ function fastifyNext (fastify, options, next) {
               reply.raw.setHeader(headerName, headerValue)
             }
 
-            return app.render(request.raw, reply.raw, path, request.query)
-              .then(() => {
-                reply.sent = true
-              })
-          }
+            await app.render(request.raw, reply.raw, path, request.query)
 
-          done()
+            reply.sent = true
+          }
         })
         .addHook('onClose', function () {
           return app.close()
