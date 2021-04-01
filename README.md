@@ -1,6 +1,9 @@
 # fastify-nextjs
 
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  ![CI workflow](https://github.com/fastify/fastify-nextjs/workflows/CI%20workflow/badge.svg)
+![CI](https://github.com/fastify/fastify-nextjs/workflows/CI/badge.svg)
+[![NPM version](https://img.shields.io/npm/v/fastify-nextjs.svg?style=flat)](https://www.npmjs.com/package/fastify-nextjs)
+[![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-nextjs/badge.svg)](https://snyk.io/test/github/fastify/fastify-nextjs)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 React server side rendering support for Fastify with [Next](https://nextjs.org/docs/advanced-features/custom-server) Framework.
 
