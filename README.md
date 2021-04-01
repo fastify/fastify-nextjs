@@ -92,8 +92,8 @@ fastify.register(require('fastify-nextjs'), {
 ## Acknowledgements
 
 This project is kindly sponsored by:
-- [NearForm](http://nearform.com)
-- [LetzDoIt](http://www.letzdoitapp.com/)
+- [NearForm](https://nearform.com)
+- [LetzDoIt](https://www.letzdoitapp.com/)
 
 ## License
 
