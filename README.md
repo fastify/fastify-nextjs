@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-nextjs/badge.svg)](https://snyk.io/test/github/fastify/fastify-nextjs)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
-React server side rendering support for Fastify with [Next.js](https://nextjs.org/docs/advanced-features/custom-server) framework.
+React server-side rendering support for Fastify with [Next.js](https://nextjs.org/docs/advanced-features/custom-server) framework.
 
 ## Install
 ```
@@ -14,7 +14,7 @@ npm i fastify-nextjs next react react-dom --save
 
 ## Usage
 Since Next.js needs some time to be ready on the first launch, you must declare your routes inside the `after` callback, after you registered the plugin.  
-The plugin will expose the api `next` in Fastify that will handle the rendering for you.  
+The plugin will expose the `next` API in Fastify that will handle the rendering for you.  
 ```js
 const fastify = require('fastify')()
 
