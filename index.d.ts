@@ -7,13 +7,12 @@ import {
   FastifySchema,
   HTTPMethods
 } from 'fastify';
-import DevServer from 'next/dist/server/next-dev-server';
 import { NextServer } from 'next/dist/server/next';
 import underPressure from 'under-pressure';
 
 declare module 'fastify' {
   type FastifyNextCallback = (
-    app: DevServer,
+    app: NextServer,
     req: FastifyRequest,
     reply: FastifyReply
   ) => Promise<void>;
