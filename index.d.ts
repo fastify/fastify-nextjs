@@ -17,7 +17,7 @@ declare module 'fastify' {
   ) => Promise<void>;
 
   interface FastifyInstance {
-    next(
+    next:(
       path: string,
       opts?:
         | {
@@ -26,7 +26,7 @@ declare module 'fastify' {
           }
         | FastifyNextCallback,
       handle?: FastifyNextCallback
-    ): void;
+    )=> void;
   }
 
   interface FastifyReply {
