@@ -8,6 +8,8 @@ import {
   HTTPMethods
 } from 'fastify';
 import DevServer from 'next/dist/server/next-dev-server';
+import { NextServer } from 'next/dist/server/next';
+import underPressure from 'under-pressure';
 
 declare module 'fastify' {
   type FastifyNextCallback = (
@@ -34,6 +36,16 @@ declare module 'fastify' {
   }
 }
 
-declare const fastifyNext: FastifyPluginCallback<{ [key: string]: any }>;
+// Infer options type, because not exported from Next.
+type NextServerConstructor = ConstructorParameters<typeof NextServer>[0]
+
+declare namespace fastifyNext {
+  interface FastifyNextOptions extends NextServerConstructor {
+    underPressure?: boolean | underPressure.UnderPressureOptions;
+    noServeAssets?: boolean;
+  }
+}
+
+declare const fastifyNext: FastifyPluginCallback<fastifyNext.FastifyNextOptions>;
 
 export default fastifyNext;

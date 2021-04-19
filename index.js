@@ -5,10 +5,19 @@ const fp = require('fastify-plugin')
 const Next = require('next')
 
 function fastifyNext (fastify, options, next) {
-  if (options.underPressure) {
-    const opts = typeof options.underPressure === 'object' ? options.underPressure : {}
-    fastify.register(require('under-pressure'), opts)
+  if ('underPressure' in options) {
+    if (options.underPressure) {
+      const opts = typeof options.underPressure === 'object' ? options.underPressure : {}
+      fastify.register(require('under-pressure'), opts)
+    }
     delete options.underPressure
+  }
+
+  let noServeAssets = false
+
+  if ('noServeAssets' in options) {
+    noServeAssets = options.noServeAssets
+    delete options.noServeAssets
   }
 
   const app = Next(Object.assign({}, { dev: process.env.NODE_ENV !== 'production' }, options))
@@ -23,9 +32,16 @@ function fastifyNext (fastify, options, next) {
         .addHook('onClose', function () {
           return app.close()
         })
-        .after(() => {
-          fastify.next('/_next/*')
-        })
+
+      if (!noServeAssets) {
+        const basePath = app.server.nextConfig.basePath || ''
+        const nextAssetsPath = `${basePath}/_next/*`
+
+        fastify
+          .after(() => {
+            fastify.next(nextAssetsPath)
+          })
+      }
       next()
     })
     .catch(err => next(err))
