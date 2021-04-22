@@ -4,7 +4,10 @@ import fastifyNext from './index';
 const app = fastify();
 
 app.register(fastifyNext, {
-  logLevel: "error"
+  logLevel: "error", // option from Fastify.js, RegisterOptions
+  underPressure: false, // option from fastify-nextjs, FastifyNextOptions
+  noServeAssets: false, // option from fastify-nextjs, FastifyNextOptions
+  dev: true, // option from Next.js,
 }).after(() => {
   app.next('/a');
 

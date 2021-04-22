@@ -64,6 +64,27 @@ fastify.next('/api/*', { method: 'GET' });
 fastify.next('/api/*', { method: 'POST' });
 ```
 
+### Assets serving
+
+By default plugin handle route `${basePath}/_next/*` and forward to Next.js.
+
+If you have custom preprocessing for `_next/*` requests, you can prevent this this handling with `noServeAssets: true` property for plugin options:
+
+```js
+fastify
+  .register(require('fastify-nextjs'), {
+    noServeAssets: true
+  })
+  .after(() => {
+    fastify.next(`${process.env.BASE_PATH || ''}/_next/*`, (app, req, reply) => {
+      // your code
+      app.getRequestHandler()(req.raw, reply.raw).then(() => {
+        reply.sent = true
+      })
+    })
+  })
+```
+
 ### under-pressure
 
 The plugin includes [under-pressure](https://github.com/fastify/under-pressure), which can be configured by providing an `underPressure` property to the plugin options. 

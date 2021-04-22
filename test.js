@@ -210,6 +210,51 @@ test('should serve /_next/* static assets', t => {
   commonAssets.map(suffix => testNextAsset(t, fastify, `/_next/${suffix}`))
 })
 
+test('should serve /base_path/_next/* static assets when basePath defined', t => {
+  t.plan(12)
+
+  const manifest = require('./.next/build-manifest.json')
+
+  const fastify = Fastify()
+
+  fastify
+    .register(require('./index'), {
+      conf: {
+        basePath: '/base_path'
+      }
+    })
+    .after(() => {
+      fastify.next('/hello')
+    })
+
+  t.tearDown(() => fastify.close())
+
+  const commonAssets = manifest.pages['/hello']
+  commonAssets.map(suffix => testNextAsset(t, fastify, `/base_path/_next/${suffix}`))
+})
+
+test('should not serve static assets with provided option noServeAssets: true', t => {
+  t.plan(12)
+
+  const manifest = require('./.next/build-manifest.json')
+
+  const fastify = Fastify()
+
+  fastify
+    .register(require('./index'), {
+      noServeAssets: true,
+      underPressure: false
+    })
+    .after(() => {
+      fastify.next('/hello')
+    })
+
+  t.tearDown(() => fastify.close())
+
+  const commonAssets = manifest.pages['/hello']
+  commonAssets.map(suffix => testNoServeNextAsset(t, fastify, `/_next/${suffix}`))
+})
+
 test('should return a json data on api route', t => {
   t.plan(3)
 
@@ -515,5 +560,14 @@ function testNextAsset (t, fastify, url) {
     t.equal(res.statusCode, 200)
     t.equal(res.headers['content-type'],
       'application/javascript; charset=UTF-8')
+  })
+}
+
+function testNoServeNextAsset (t, fastify, url) {
+  fastify.inject({ url, method: 'GET' }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 404)
+    t.equal(res.headers['content-type'],
+      'application/json; charset=utf-8')
   })
 }
