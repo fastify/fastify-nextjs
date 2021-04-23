@@ -12,6 +12,10 @@ app.register(fastifyNext, {
   app.next('/a');
 
   app.next('/*', (nextApp, req, reply) => {
+    if (!nextApp.options) {
+      throw new Error("nextApp hasn't options!")
+    }
+
     return nextApp
       .getRequestHandler()(req.raw, reply.raw)
       .then(() => {
