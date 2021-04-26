@@ -30,7 +30,7 @@ test('should return an html document', t => {
   t.plan(3)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify
     .register(require('./index'))
@@ -52,7 +52,7 @@ test('should support different methods', t => {
   t.plan(3)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify
     .register(require('./index'))
@@ -74,7 +74,7 @@ test('should support a custom handler', t => {
   t.plan(3)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify
     .register(require('./index'))
@@ -98,7 +98,7 @@ test('should return 404 on undefined route', t => {
   t.plan(2)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify
     .register(require('./index'))
@@ -204,7 +204,7 @@ test('should serve /_next/* static assets', t => {
       fastify.next('/hello')
     })
 
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   const commonAssets = manifest.pages['/hello']
   commonAssets.map(suffix => testNextAsset(t, fastify, `/_next/${suffix}`))
@@ -227,7 +227,7 @@ test('should serve /base_path/_next/* static assets when basePath defined', t =>
       fastify.next('/hello')
     })
 
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   const commonAssets = manifest.pages['/hello']
   commonAssets.map(suffix => testNextAsset(t, fastify, `/base_path/_next/${suffix}`))
@@ -249,7 +249,7 @@ test('should not serve static assets with provided option noServeAssets: true', 
       fastify.next('/hello')
     })
 
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   const commonAssets = manifest.pages['/hello']
   commonAssets.map(suffix => testNoServeNextAsset(t, fastify, `/_next/${suffix}`))
@@ -265,7 +265,7 @@ test('should return a json data on api route', t => {
       fastify.next('/api/*')
     })
 
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify.inject({
     url: '/api/user',
@@ -307,7 +307,7 @@ test('should not log any errors', t => {
     t.error(err)
     t.equal(res.statusCode, 200)
     t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
-    t.includes(res.payload, '<div>hello world</div>')
+    t.match(res.payload, '<div>hello world</div>')
     t.equal(showedError, false, 'Should not show any error')
   })
 })
@@ -345,7 +345,7 @@ test('should respect plugin logLevel', t => {
       })
     })
 
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify.inject({
     url: '/hello',
@@ -354,7 +354,7 @@ test('should respect plugin logLevel', t => {
     t.error(err)
     t.equal(res.statusCode, 200)
     t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
-    t.includes(res.payload, '<div>hello world</div>')
+    t.match(res.payload, '<div>hello world</div>')
     t.equal(didLog, false)
   })
 
@@ -373,7 +373,7 @@ test('should preserve Fastify response headers set by plugins and hooks', t => {
   t.plan(3)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify
     .register(require('./index'))
@@ -402,7 +402,7 @@ test('should handle Next initialization errors', t => {
   t.plan(1)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   const error = new Error('boom')
 
@@ -418,13 +418,13 @@ test('should handle Next initialization errors', t => {
   fastify
     .register(plugin)
     .ready(err => {
-      t.sameStrict(err, error)
+      t.strictSame(err, error)
     })
 })
 
 test('should not register under-pressure by default', t => {
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   const registerSpy = sinon.spy(fastify, 'register')
   const underPressureStub = sinon.stub().resolves()
@@ -444,11 +444,11 @@ test('should register under-pressure with default options when underPressure: tr
   t.plan(1)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   const plugin = proxyquire('./index', {
     'under-pressure': async function (app, opts) {
-      t.deepEqual(opts, {})
+      t.same(opts, {})
     }
   })
 
@@ -459,11 +459,11 @@ test('should register under-pressure with provided options when it is an object'
   t.plan(1)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   const plugin = proxyquire('./index', {
     'under-pressure': async function (app, opts) {
-      t.deepEqual(opts, { some: 'option' })
+      t.same(opts, { some: 'option' })
     }
   })
 
@@ -474,7 +474,7 @@ test('should register under-pressure with underPressure: true - and expose route
   t.plan(2)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   fastify.register(require('./index'), {
     underPressure: {
@@ -499,7 +499,7 @@ test('should decorate with next render function', async t => {
   t.plan(2)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   await fastify.register(require('./index'))
 
@@ -525,7 +525,7 @@ test('should let next render error page', async t => {
   t.plan(4)
 
   const fastify = Fastify()
-  t.tearDown(() => fastify.close())
+  t.teardown(() => fastify.close())
 
   await fastify.register(require('./index'))
 
@@ -551,7 +551,7 @@ test('should let next render error page', async t => {
   t.equal(res.statusCode, 500)
   t.equal(res.headers['test-header'], 'hello')
   t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
-  t.includes(res.payload, '<div>hello world</div>')
+  t.match(res.payload, '<div>hello world</div>')
 })
 
 function testNextAsset (t, fastify, url) {
