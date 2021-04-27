@@ -191,9 +191,7 @@ test('should throw if callback is not a function', t => {
   fastify.close()
 })
 
-test('should serve /_next/* static assets', t => {
-  t.plan(12)
-
+test('should serve /_next/* static assets', async t => {
   const manifest = require('./.next/build-manifest.json')
 
   const fastify = Fastify()
@@ -207,12 +205,13 @@ test('should serve /_next/* static assets', t => {
   t.teardown(() => fastify.close())
 
   const commonAssets = manifest.pages['/hello']
-  commonAssets.map(suffix => testNextAsset(t, fastify, `/_next/${suffix}`))
+
+  t.ok(commonAssets.length > 0)
+
+  await Promise.all(commonAssets.map(suffix => testNextAsset(t, fastify, `/_next/${suffix}`)))
 })
 
-test('should serve /base_path/_next/* static assets when basePath defined', t => {
-  t.plan(12)
-
+test('should serve /base_path/_next/* static assets when basePath defined', async t => {
   const manifest = require('./.next/build-manifest.json')
 
   const fastify = Fastify()
@@ -230,12 +229,13 @@ test('should serve /base_path/_next/* static assets when basePath defined', t =>
   t.teardown(() => fastify.close())
 
   const commonAssets = manifest.pages['/hello']
-  commonAssets.map(suffix => testNextAsset(t, fastify, `/base_path/_next/${suffix}`))
+
+  t.ok(commonAssets.length > 0)
+
+  await Promise.all(commonAssets.map(suffix => testNextAsset(t, fastify, `/base_path/_next/${suffix}`)))
 })
 
-test('should not serve static assets with provided option noServeAssets: true', t => {
-  t.plan(12)
-
+test('should not serve static assets with provided option noServeAssets: true', async t => {
   const manifest = require('./.next/build-manifest.json')
 
   const fastify = Fastify()
@@ -252,7 +252,10 @@ test('should not serve static assets with provided option noServeAssets: true', 
   t.teardown(() => fastify.close())
 
   const commonAssets = manifest.pages['/hello']
-  commonAssets.map(suffix => testNoServeNextAsset(t, fastify, `/_next/${suffix}`))
+
+  t.ok(commonAssets.length > 0)
+
+  await Promise.all(commonAssets.map(suffix => testNoServeNextAsset(t, fastify, `/_next/${suffix}`)))
 })
 
 test('should return a json data on api route', t => {
@@ -554,20 +557,14 @@ test('should let next render error page', async t => {
   t.match(res.payload, '<div>hello world</div>')
 })
 
-function testNextAsset (t, fastify, url) {
-  fastify.inject({ url, method: 'GET' }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 200)
-    t.equal(res.headers['content-type'],
-      'application/javascript; charset=UTF-8')
-  })
+async function testNextAsset (t, fastify, url) {
+  const res = await fastify.inject(url)
+  t.equal(res.statusCode, 200)
+  t.equal(res.headers['content-type'], 'application/javascript; charset=UTF-8')
 }
 
-function testNoServeNextAsset (t, fastify, url) {
-  fastify.inject({ url, method: 'GET' }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 404)
-    t.equal(res.headers['content-type'],
-      'application/json; charset=utf-8')
-  })
+async function testNoServeNextAsset (t, fastify, url) {
+  const res = await fastify.inject(url)
+  t.equal(res.statusCode, 404)
+  t.equal(res.headers['content-type'], 'application/json; charset=utf-8')
 }
