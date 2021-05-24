@@ -30,7 +30,7 @@ fastify.listen(3000, err => {
 })
 ```
 
-All you server rendered pages must be saved in the folder `pages`, as you can see in the [Next.js documentation](https://nextjs.org/docs/advanced-features/custom-server).
+All your server rendered pages must be saved in the folder `pages`, as you can see in the [Next.js documentation](https://nextjs.org/docs/advanced-features/custom-server).
 ```js
 // /pages/hello.js
 export default () => <div>hello world</div>
