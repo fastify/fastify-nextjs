@@ -13,8 +13,8 @@ npm i fastify-nextjs next react react-dom --save
 ```
 
 ## Usage
-Since Next.js needs some time to be ready on the first launch, you must declare your routes inside the `after` callback, after you registered the plugin.  
-The plugin will expose the `next` API in Fastify that will handle the rendering for you.  
+Since Next.js needs some time to be ready on the first launch, you must declare your routes inside the `after` callback, after you registered the plugin.
+The plugin will expose the `next` API in Fastify that will handle the rendering for you.
 ```js
 const fastify = require('fastify')()
 
@@ -87,9 +87,9 @@ fastify
 
 ### under-pressure
 
-The plugin includes [under-pressure](https://github.com/fastify/under-pressure), which can be configured by providing an `underPressure` property to the plugin options. 
+The plugin includes [under-pressure](https://github.com/fastify/under-pressure), which can be configured by providing an `underPressure` property to the plugin options.
 
-Using `under-pressure` allows implementing a circuit breaker that returns an error when the health metrics are not respected. 
+Using `under-pressure` allows implementing a circuit breaker that returns an error when the health metrics are not respected.
 Because React server side rendering is a blocking operation for the Node.js server, returning an error to the client allows signalling that the server is under too much load.
 
 The available options are the same as those accepted by `under-pressure`.
@@ -97,7 +97,7 @@ The available options are the same as those accepted by `under-pressure`.
 For example:
 
 ```js
-fastify.register(require('fastify-nextjs'), { 
+fastify.register(require('fastify-nextjs'), {
   underPressure: {
     exposeStatusRoute: true
   }
@@ -109,6 +109,9 @@ fastify.register(require('fastify-nextjs'), {
   - (default) when false, `under-pressure` is not registered
   - when true, `under-pressure` is registered with default options
   - when it is an object, `under-pressure` is registered with the provided options
+
+## Development
+CI currently runs npm@6 so when upgrading packages, please use this version.
 
 ## Acknowledgements
 
