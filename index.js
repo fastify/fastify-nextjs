@@ -81,7 +81,7 @@ function fastifyNext (fastify, options, next) {
     }
   }
 
-  async function render (path) {
+  async function render (path, args) {
     assert(typeof path === 'string', 'path must be a string')
 
     const reply = this
@@ -97,7 +97,12 @@ function fastifyNext (fastify, options, next) {
       reply.raw.setHeader(headerName, headerValue)
     }
 
-    await app.render(request.raw, reply.raw, path, request.query)
+    if (typeof args === undefined) {
+      await app.render(request.raw, reply.raw, path, request.query)
+    } else {
+      delete request.query
+      await app.render(request.raw, reply.raw, path, args)
+    }
 
     reply.sent = true
   }
