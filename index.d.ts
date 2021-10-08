@@ -42,6 +42,7 @@ declare namespace fastifyNext {
   interface FastifyNextOptions extends NextServerConstructor {
     underPressure?: boolean | underPressure.UnderPressureOptions;
     noServeAssets?: boolean;
+    onRouteChange?: Function;
   }
 }
 

@@ -14,10 +14,16 @@ function fastifyNext (fastify, options, next) {
   }
 
   let noServeAssets = false
+  let onRouteChange = null
 
   if ('noServeAssets' in options) {
     noServeAssets = options.noServeAssets
     delete options.noServeAssets
+  }
+
+  if ('onRouteChange' in options) {
+    onRouteChange = options.onRouteChange
+    delete options.onRouteChange
   }
 
   const app = Next(Object.assign({}, { dev: process.env.NODE_ENV !== 'production' }, options))
@@ -61,6 +67,7 @@ function fastifyNext (fastify, options, next) {
     if (opts.method) { assert(typeof opts.method === 'string', 'options.method must be a string') }
     if (opts.schema) { assert(typeof opts.schema === 'object', 'options.schema must be an object') }
     if (callback) { assert(typeof callback === 'function', 'callback must be a function') }
+    if (onRouteChange) { assert(typeof onRouteChange === 'function', 'onRouteChange must be a function') }
 
     const method = opts.method || 'get'
     this[method.toLowerCase()](path, opts, handler)
@@ -68,6 +75,10 @@ function fastifyNext (fastify, options, next) {
     function handler (req, reply) {
       for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
         reply.raw.setHeader(headerName, headerValue)
+      }
+
+      if (onRouteChange) {
+        onRouteChange(req, reply)
       }
 
       if (callback) {
@@ -83,6 +94,7 @@ function fastifyNext (fastify, options, next) {
 
   async function render (path) {
     assert(typeof path === 'string', 'path must be a string')
+    if (onRouteChange) { assert(typeof onRouteChange === 'function', 'onRouteChange must be a function') }
 
     const reply = this
     const { request } = reply
@@ -95,6 +107,10 @@ function fastifyNext (fastify, options, next) {
       }
 
       reply.raw.setHeader(headerName, headerValue)
+    }
+
+    if (onRouteChange) {
+      onRouteChange(request, reply)
     }
 
     await app.render(request.raw, reply.raw, path, request.query)
