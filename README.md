@@ -110,6 +110,55 @@ fastify.register(require('fastify-nextjs'), {
   - when true, `under-pressure` is registered with default options
   - when it is an object, `under-pressure` is registered with the provided options
 
+## Custom properties on the reqest object
+If you want to share some custom objects (for example other fastify plugin instances - e.g. fastify-redis) across the server/client with each page request, you can use the `onRequest` hook to add it to the request object.
+Here is an example on how to do it:
+
+```js
+const Fastify = require('fastify')
+const FastifyRedis = require('fastify-redis')
+const FastifyNextJS = require('fastify-nextjs')
+
+const fastify = Fastify()
+fastify.register(FastifyRedis, { host: '127.0.0.1' })
+fastify.register(FastifyNextJS)
+
+fastify.register(function(instance) {
+  // for performance reasons we do not want it to run on every request
+  // only the nextjs one should run
+  instance.addHook('onRequest', function(request, reply, done) {
+    // define a custom property on the request
+    request.raw.customProperty = { hello: "world" }
+    // OR make the instance of fastify-redis available in the request
+    request.raw.redisInstance = instance.redis
+    done()
+  })
+
+  instance.next('/', function(app, request, reply) {
+    // your custom property containing the object will be available here
+    // request.raw.customProperty
+    // OR the redis instance
+    // request.raw.redisInstance
+    app.render(request.raw, reply.raw, '/hello', request.query, {})
+  })
+}, { prefix: '/hello' })
+```
+In the example above we made the `customProperty` and `redisInstance` accessible in every request that is made to the server. On the client side it can be accessed like in this example:
+```js
+const CustomPropPage = ({ cp, ri }) => <div>custom property value: {cp} | redis instance: {ri}</div>;
+
+export default CustomPropPage;
+
+export const getServerSideProps = async function (ctx) {
+  return {
+    props: {
+      cp: ctx.req.customProperty,
+      ri: ctx.req.redisInstance,
+    }
+  };
+};
+```
+
 ## Development
 CI currently runs npm@6 so when upgrading packages, please use this version.
 
