@@ -568,3 +568,48 @@ async function testNoServeNextAsset (t, fastify, url) {
   t.equal(res.statusCode, 404)
   t.equal(res.headers['content-type'], 'application/json; charset=utf-8')
 }
+
+test('should preserve custom properties on the request when using onRequest hook', async t => {
+  // t.plan(7)
+  const customProperty = { value: 'test' }
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  await fastify.register(require('./index'))
+    .after(() => {
+      fastify.next('/hello', (app, req, reply) => {
+        t.same(req.raw.customProperty, { value: 'test' })
+        app.render(req.raw, reply.raw, '/hello', req.query, {})
+      })
+
+      fastify.next('/custom_prop_page', (app, req, reply) => {
+        t.same(req.raw.customProperty, { value: 'test' })
+        app.render(req.raw, reply.raw, '/custom_prop_page', req.query, {})
+      })
+    })
+
+  fastify.addHook('onRequest', (req, reply, done) => {
+    req.raw.customProperty = customProperty
+    done()
+  })
+
+  let res = await fastify.inject({
+    url: '/hello',
+    method: 'GET'
+  })
+
+  t.equal(res.statusCode, 200)
+  t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+  t.match(res.payload, '<div>hello world</div>')
+
+  res = await fastify.inject({
+    url: '/custom_prop_page',
+    method: 'GET'
+  })
+
+  t.equal(res.statusCode, 200)
+  t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+  // for some reason React (or Next.js) adds <!-- --> in front of the property that is being evaluated on the page
+  t.match(res.payload, '<div>another hello world page, customProperty value: <!-- -->test</div>')
+})
