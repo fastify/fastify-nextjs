@@ -115,22 +115,33 @@ If you want to share some custom objects (for example other fastify plugin insta
 Here is an example on how to do it:
 
 ```js
-fastify.register(require('fastify-redis'), { host: '127.0.0.1' })
+const Fastify = require('fastify')
+const FastifyRedis = require('fastify-redis')
+const FastifyNextJS = require('fastify-nextjs')
 
-fastify.addHook('onRequest', (req, reply, done) => {
-    req.raw.customProperty = { hello: "world" }
+const fastify = Fastify()
+fastify.register(FastifyRedis, { host: '127.0.0.1' })
+fastify.register(FastifyNextJS)
+
+fastify.register(function(instance) {
+  // for performance reasons we do not want it to run on every request
+  // only the nextjs one should run
+  instance.addHook('onRequest', function(request, reply, done) {
+    // define a custom property on the request
+    request.raw.customProperty = { hello: "world" }
     // OR make the instance of fastify-redis available in the request
-    req.raw.redisInstance = fastify.redis
+    request.raw.redisInstance = instance.redis
     done()
   })
 
-fastify.next('/hello', (app, req, reply) => {
-  // your custom property containing the object will be available here
-  // req.raw.customProperty
-  // OR the redis instance
-  // req.raw.redisInstance
-  app.render(req.raw, reply.raw, '/hello', req.query, {})
-})
+  instance.next('/', function(app, request, reply) {
+    // your custom property containing the object will be available here
+    // request.raw.customProperty
+    // OR the redis instance
+    // request.raw.redisInstance
+    app.render(request.raw, reply.raw, '/hello', request.query, {})
+  })
+}, { prefix: '/hello' })
 ```
 In the example above we made the `customProperty` and `redisInstance` accessible in every request that is made to the server. On the client side it can be accessed like in this example:
 ```js
