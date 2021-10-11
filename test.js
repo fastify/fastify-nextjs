@@ -570,7 +570,7 @@ async function testNoServeNextAsset (t, fastify, url) {
 }
 
 test('should preserve custom properties on the request when using onRequest hook', async t => {
-  // t.plan(7)
+  t.plan(8)
   const customProperty = { value: 'test' }
 
   const fastify = Fastify()
