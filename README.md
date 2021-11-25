@@ -110,8 +110,8 @@ fastify.register(require('fastify-nextjs'), {
   - when true, `under-pressure` is registered with default options
   - when it is an object, `under-pressure` is registered with the provided options
 
-## Custom properties on the reqest object
-If you want to share some custom objects (for example other fastify plugin instances - e.g. fastify-redis) across the server/client with each page request, you can use the `onRequest` hook to add it to the request object.
+## Custom properties on the request object
+If you want to share custom objects (for example other fastify plugin instances - e.g. fastify-redis) across the server/client with each page request, you can use the `onRequest` hook to add it to the request object.
 Here is an example on how to do it:
 
 ```js
