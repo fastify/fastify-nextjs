@@ -543,7 +543,7 @@ test('should let next render error page', async t => {
 
   fastify.setErrorHandler((err, req, reply) => {
     reply.status(err.statusCode || 500)
-    return reply.nextRender('/hello')
+    return reply.nextRenderError(err)
   })
 
   const res = await fastify.inject({
@@ -554,7 +554,7 @@ test('should let next render error page', async t => {
   t.equal(res.statusCode, 500)
   t.equal(res.headers['test-header'], 'hello')
   t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
-  t.match(res.payload, '<div>hello world</div>')
+  t.match(res.payload, '<div>error</div>')
 })
 
 async function testNextAsset (t, fastify, url) {
