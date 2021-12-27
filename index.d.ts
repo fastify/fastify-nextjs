@@ -23,7 +23,7 @@ declare module 'fastify' {
       opts?:
         | {
             method: HTTPMethods;
-            schema: FastifySchema;
+            schema?: FastifySchema;
           }
         | FastifyNextCallback,
       handle?: FastifyNextCallback
@@ -36,7 +36,7 @@ declare module 'fastify' {
 }
 
 // Infer options type, because not exported from Next.
-type NextServerConstructor = ConstructorParameters<typeof NextServer>[0]
+type NextServerConstructor = ConstructorParameters<typeof NextServer>[0];
 
 declare namespace fastifyNext {
   interface FastifyNextOptions extends NextServerConstructor {
