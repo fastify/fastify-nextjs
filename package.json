@@ -16,8 +16,8 @@
     "build:prod": "cross-env NODE_ENV=production next build",
     "dev": "node example.js",
     "serve": "npm run build:prod && cross-env NODE_ENV=production node example.js",
-    "test": "npm run build:prod && standard && cross-env NODE_ENV=production tap test.js && npm run typescript",
-    "typescript": "tsc --project ./tsconfig.json"
+    "test": "npm run test:types && npm run build:prod && standard && cross-env NODE_ENV=production tap test.js",
+    "test:types": "tsd"
   },
   "repository": {
     "type": "git",
@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "fastify-plugin": "^3.0.0",
+    "tsd": "^0.19.0",
     "under-pressure": "^5.4.0"
   },
   "devDependencies": {
@@ -60,7 +61,6 @@
     "react-dom": "^17.0.1",
     "sinon": "^12.0.0",
     "standard": "^16.0.1",
-    "tap": "^15.0.5",
-    "typescript": "^4.0.3"
+    "tap": "^15.0.5"
   }
 }
