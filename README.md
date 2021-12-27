@@ -49,12 +49,19 @@ fastify.next('/hello', (app, req, reply) => {
 })
 ```
 
-If you need to render with Next.js from within a custom handler (such as an error handler), use `reply.nextRender`
+If you need to render with Next.js from within a custom handler, use `reply.nextRender`
 
 ```js
 app.setErrorHandler((err, req, reply) => {
-  reply.status(err.statusCode || 500)
-  return reply.nextRender('/_error')
+  return reply.nextRender('/a')
+})
+```
+
+If you need to render a Next.js error page, use `reply.nextRenderError`
+
+```js
+app.setErrorHandler((err, req, reply) => {
+  return reply.status(err.statusCode || 500).nextRenderError(err)
 })
 ```
 

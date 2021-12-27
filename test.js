@@ -524,7 +524,33 @@ test('should decorate with next render function', async t => {
   t.equal(res.headers['test-header'], 'hello')
 })
 
-test('should let next render error page', async t => {
+test('should decorate with next render error function', async t => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  await fastify.register(require('./index'))
+
+  fastify.addHook('onRequest', (req, reply, done) => {
+    reply.header('test-header', 'hello')
+    done()
+  })
+
+  fastify.get('/hello', (req, reply) => {
+    return reply.nextRenderError(new Error('Test error message'))
+  })
+
+  const res = await fastify.inject({
+    url: '/hello',
+    method: 'GET'
+  })
+
+  t.equal(res.statusCode, 200)
+  t.equal(res.headers['test-header'], 'hello')
+})
+
+test('should let next render any page in fastify error handler', async t => {
   t.plan(4)
 
   const fastify = Fastify()
@@ -555,6 +581,39 @@ test('should let next render error page', async t => {
   t.equal(res.headers['test-header'], 'hello')
   t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
   t.match(res.payload, '<div>hello world</div>')
+})
+
+test('should let next render error page in fastify error handler', async t => {
+  t.plan(4)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  await fastify.register(require('./index'))
+
+  fastify.addHook('onRequest', (req, reply, done) => {
+    reply.header('test-header', 'hello')
+    done()
+  })
+
+  fastify.get('/hello', (req, reply) => {
+    throw new Error('boom')
+  })
+
+  fastify.setErrorHandler((err, req, reply) => {
+    reply.status(err.statusCode || 500)
+    return reply.nextRenderError(err)
+  })
+
+  const res = await fastify.inject({
+    url: '/hello',
+    method: 'GET'
+  })
+
+  t.equal(res.statusCode, 500)
+  t.equal(res.headers['test-header'], 'hello')
+  t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+  t.match(res.payload, '<div>error</div>')
 })
 
 async function testNextAsset (t, fastify, url) {

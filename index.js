@@ -29,6 +29,7 @@ function fastifyNext (fastify, options, next) {
       fastify
         .decorate('next', route.bind(fastify))
         .decorateReply('nextRender', render)
+        .decorateReply('nextRenderError', renderError)
         .addHook('onClose', function () {
           return app.close()
         })
@@ -98,6 +99,25 @@ function fastifyNext (fastify, options, next) {
     }
 
     await app.render(request.raw, reply.raw, path, request.query)
+
+    reply.sent = true
+  }
+
+  async function renderError (err) {
+    const reply = this
+    const { request } = reply
+
+    // set custom headers as next will finish the request
+    for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
+      // Fastify sets content-length to `undefined` for error handlers, which is an invalid value
+      if (headerName === 'content-length' && headerValue === undefined) {
+        continue
+      }
+
+      reply.raw.setHeader(headerName, headerValue)
+    }
+
+    await app.renderError(err, request.raw, reply.raw, request.url, request.query)
 
     reply.sent = true
   }
