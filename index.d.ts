@@ -32,6 +32,7 @@ declare module 'fastify' {
 
   interface FastifyReply {
     nextRender(path: string): Promise<void>;
+    nextRenderError(err: any): Promise<void>;
   }
 }
 
