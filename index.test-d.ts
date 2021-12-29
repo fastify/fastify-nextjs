@@ -12,6 +12,11 @@ app
     dev: true // option from Next.js,
   })
   .after(() => {
+    app.setErrorHandler((err, req, reply) => {
+      reply.log.error({ req, res: reply, err }, 'Internal server error');
+      return reply.code(500).nextRenderError(err);
+    });
+
     app.next('/a');
 
     app.next('/*', (nextApp, req, reply) => {
