@@ -1,4 +1,5 @@
 import fastify, { FastifyInstance } from 'fastify';
+import { expectError } from 'tsd';
 import fastifyNext from './index';
 
 // Declaration merging for custom property injection
@@ -58,4 +59,8 @@ app
         done();
       },
     });
+
+    expectError(app.next('/unknown-option', {
+      invalid: 'unknown-option'
+    }))
   });
