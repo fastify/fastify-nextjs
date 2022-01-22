@@ -1,12 +1,13 @@
 /// <reference types="next" />
 
-import {
-  FastifyReply,
-  FastifyRequest,
+import type {
+  ContextConfigDefault,
   FastifyPluginCallback,
+  FastifyRequest,
   FastifySchema,
   HTTPMethods
 } from 'fastify';
+import type { RouteGenericInterface, RouteShorthandOptions } from 'fastify/types/route';
 import { NextServer } from 'next/dist/server/next';
 import underPressure from 'under-pressure';
 
@@ -17,14 +18,24 @@ declare module 'fastify' {
     reply: FastifyReply
   ) => Promise<void>;
 
-  interface FastifyInstance {
-    next(
+  interface FastifyInstance<RawServer, RawRequest, RawReply> {
+    next<
+      RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+      ContextConfig = ContextConfigDefault,
+      SchemaCompiler = FastifySchema
+    >(
       path: string,
       opts?:
-        | {
-            method: HTTPMethods;
-            schema?: FastifySchema;
-          }
+        | (RouteShorthandOptions<
+            RawServer,
+            RawRequest,
+            RawReply,
+            RouteGeneric,
+            ContextConfig,
+            SchemaCompiler
+          > & {
+            method?: HTTPMethods;
+          })
         | FastifyNextCallback,
       handle?: FastifyNextCallback
     ): void;

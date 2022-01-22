@@ -1,6 +1,13 @@
 import fastify, { FastifyInstance } from 'fastify';
-import { expectError, expectType } from 'tsd';
+import { expectError } from 'tsd';
 import fastifyNext from './index';
+
+// Declaration merging for custom property injection
+declare module 'http' {
+  interface IncomingMessage {
+    server: FastifyInstance
+  }
+}
 
 const app = fastify();
 
@@ -45,4 +52,15 @@ app
         reply.send('OK');
       }
     );
+
+    app.next('/options-with-hook-injecting-custom-property', {
+      onRequest: (req, _, done) => {
+        req.raw.server = req.server;
+        done();
+      },
+    });
+
+    expectError(app.next('/unknown-option', {
+      invalid: 'unknown-option'
+    }))
   });
