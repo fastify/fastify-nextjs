@@ -114,6 +114,6 @@ function fastifyNext (fastify, options, next) {
 }
 
 module.exports = fp(fastifyNext, {
-  fastify: '>=1.0.0',
+  fastify: '>=3.22.1',
   name: 'fastify-nextjs'
 })
