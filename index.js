@@ -90,11 +90,6 @@ function fastifyNext (fastify, options, next) {
 
     // set custom headers as next will finish the request
     for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
-      // Fastify sets content-length to `undefined` for error handlers, which is an invalid value
-      if (headerName === 'content-length' && headerValue === undefined) {
-        continue
-      }
-
       reply.raw.setHeader(headerName, headerValue)
     }
 
@@ -109,11 +104,6 @@ function fastifyNext (fastify, options, next) {
 
     // set custom headers as next will finish the request
     for (const [headerName, headerValue] of Object.entries(reply.getHeaders())) {
-      // Fastify sets content-length to `undefined` for error handlers, which is an invalid value
-      if (headerName === 'content-length' && headerValue === undefined) {
-        continue
-      }
-
       reply.raw.setHeader(headerName, headerValue)
     }
 
@@ -124,6 +114,6 @@ function fastifyNext (fastify, options, next) {
 }
 
 module.exports = fp(fastifyNext, {
-  fastify: '>=1.0.0',
+  fastify: '>=3.22.1',
   name: 'fastify-nextjs'
 })
