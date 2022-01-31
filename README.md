@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-nextjs/badge.svg)](https://snyk.io/test/github/fastify/fastify-nextjs)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
-React server-side rendering support for Fastify with [Next.js](https://nextjs.org/docs/advanced-features/custom-server) framework.
+React server-side rendering support for Fastify with [Next.js](https://nextjs.org/docs/advanced-features/custom-server) framework. This library is for letting an existing Fastify server utilize NextJS, not for replacing NextJS' internal webserver with Fastify.
 
 ## Install
 ```
