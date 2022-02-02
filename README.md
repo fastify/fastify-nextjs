@@ -166,15 +166,6 @@ export const getServerSideProps = async function (ctx) {
 };
 ```
 
-## Development
-CI currently runs npm@6 so when upgrading packages, please use this version.
-
-## Acknowledgements
-
-This project is kindly sponsored by:
-- [NearForm](https://nearform.com)
-- [LetzDoIt](https://www.letzdoitapp.com/)
-
 ## Plugin Timeout and Next.js development mode
 The default timeout for plugins in Fastify is 10000ms, which can be a problem for huge Next.js Projects where the initial build time is higher than that.
 Usually, you will get an error like this:
@@ -187,6 +178,15 @@ The workaround or fix is to increase the plugin timeout:
 const isDev = process.env.NODE_ENV !== 'production';
 const fastify = Fastify({ pluginTimeout: isDev ? 120_000 : undefined });
 ```
+
+## Development
+CI currently runs npm@6 so when upgrading packages, please use this version.
+
+## Acknowledgements
+
+This project is kindly sponsored by:
+- [NearForm](https://nearform.com)
+- [LetzDoIt](https://www.letzdoitapp.com/)
 
 ## License
 
