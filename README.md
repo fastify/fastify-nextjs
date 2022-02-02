@@ -175,8 +175,7 @@ This project is kindly sponsored by:
 - [NearForm](https://nearform.com)
 - [LetzDoIt](https://www.letzdoitapp.com/)
 
-## Known Errors
-### Plugin Timeout
+## Plugin Timeout and Next.js development mode
 The default timeout for plugins in Fastify is 10000ms, which can be a problem for huge Next.js Projects where the initial build time is higher than that.
 Usually, you will get an error like this:
 ```
