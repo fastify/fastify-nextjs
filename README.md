@@ -175,6 +175,20 @@ This project is kindly sponsored by:
 - [NearForm](https://nearform.com)
 - [LetzDoIt](https://www.letzdoitapp.com/)
 
+## Known Errors
+### Plugin Timeout
+The default timeout for plugins in Fastify is 10000ms, which can be a problem for huge Next.js Projects where the initial build time is higher than that.
+Usually, you will get an error like this:
+```
+Error: ERR_AVVIO_PLUGIN_TIMEOUT: plugin did not start in time: /app/node_modules/fastify-nextjs/index.js. You may have forgotten to call 'done' function or to resolve a Promise
+```
+
+The workaround or fix is to increase the plugin timeout:
+```js
+const isDev = process.env.NODE_ENV !== 'production';
+const fastify = Fastify({ pluginTimeout: isDev ? 120_000 : undefined });
+```
+
 ## License
 
 Licensed under [MIT](./LICENSE).
