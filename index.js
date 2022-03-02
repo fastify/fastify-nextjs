@@ -5,22 +5,15 @@ const fp = require('fastify-plugin')
 const Next = require('next')
 
 function fastifyNext (fastify, options, next) {
-  if ('underPressure' in options) {
-    if (options.underPressure) {
-      const opts = typeof options.underPressure === 'object' ? options.underPressure : {}
-      fastify.register(require('under-pressure'), opts)
-    }
-    delete options.underPressure
+  const { underPressure, noServeAssets, ...nextOptions } = options
+
+  if (underPressure) {
+    const opts = typeof underPressure === 'object' ? underPressure : Object.create(null)
+
+    fastify.register(require('under-pressure'), opts)
   }
 
-  let noServeAssets = false
-
-  if ('noServeAssets' in options) {
-    noServeAssets = options.noServeAssets
-    delete options.noServeAssets
-  }
-
-  const app = Next(Object.assign({}, { dev: process.env.NODE_ENV !== 'production' }, options))
+  const app = Next(Object.assign({}, { dev: process.env.NODE_ENV !== 'production' }, nextOptions))
   const handleNextRequests = app.getRequestHandler()
 
   app
