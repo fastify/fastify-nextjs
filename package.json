@@ -1,6 +1,6 @@
 {
-  "name": "fastify-nextjs",
-  "version": "7.2.0",
+  "name": "@fastify/nextjs",
+  "version": "8.0.0",
   "description": "React server side rendering support for Fastify with Next",
   "main": "index.js",
   "engines": {
@@ -62,5 +62,8 @@
     "standard": "^17.0.0",
     "tap": "^16.0.0",
     "tsd": "^0.20.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
