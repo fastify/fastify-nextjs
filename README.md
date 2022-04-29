@@ -1,7 +1,7 @@
-# fastify-nextjs
+# @fastify/nextjs
 
 ![CI](https://github.com/fastify/fastify-nextjs/workflows/CI/badge.svg)
-[![NPM version](https://img.shields.io/npm/v/fastify-nextjs.svg?style=flat)](https://www.npmjs.com/package/fastify-nextjs)
+[![NPM version](https://img.shields.io/npm/v/@fastify/nextjs.svg?style=flat)](https://www.npmjs.com/package/@fastify/nextjs)
 [![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-nextjs/badge.svg)](https://snyk.io/test/github/fastify/fastify-nextjs)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
@@ -9,7 +9,7 @@ React server-side rendering support for Fastify with [Next.js](https://nextjs.or
 
 ## Install
 ```
-npm i fastify-nextjs next react react-dom --save
+npm i @fastify/nextjs next react react-dom --save
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ The plugin will expose the `next` API in Fastify that will handle the rendering 
 const fastify = require('fastify')()
 
 fastify
-  .register(require('fastify-nextjs'))
+  .register(require('@fastify/nextjs'))
   .after(() => {
     fastify.next('/hello')
   })
@@ -37,7 +37,7 @@ export default () => <div>hello world</div>
 ```
 If you need to pass [custom options](https://nextjs.org/docs/advanced-features/custom-server) to `next` just pass them to register as second parameter.
 ```js
-fastify.register(require('fastify-nextjs'), { dev: true })
+fastify.register(require('@fastify/nextjs'), { dev: true })
 ```
 
 If you need to handle the render part yourself, just pass a callback to `next`:
@@ -79,7 +79,7 @@ If you have custom preprocessing for `_next/*` requests, you can prevent this th
 
 ```js
 fastify
-  .register(require('fastify-nextjs'), {
+  .register(require('@fastify/nextjs'), {
     noServeAssets: true
   })
   .after(() => {
@@ -104,7 +104,7 @@ The available options are the same as those accepted by `under-pressure`.
 For example:
 
 ```js
-fastify.register(require('fastify-nextjs'), {
+fastify.register(require('@fastify/nextjs'), {
   underPressure: {
     exposeStatusRoute: true
   }
@@ -118,13 +118,13 @@ fastify.register(require('fastify-nextjs'), {
   - when it is an object, `under-pressure` is registered with the provided options
 
 ## Custom properties on the request object
-If you want to share custom objects (for example other fastify plugin instances - e.g. fastify-redis) across the server/client with each page request, you can use the `onRequest` hook to add it to the request object.
+If you want to share custom objects (for example other fastify plugin instances - e.g. @fastify/redis) across the server/client with each page request, you can use the `onRequest` hook to add it to the request object.
 Here is an example on how to do it:
 
 ```js
 const Fastify = require('fastify')
-const FastifyRedis = require('fastify-redis')
-const FastifyNextJS = require('fastify-nextjs')
+const FastifyRedis = require('@fastify/redis')
+const FastifyNextJS = require('@fastify/nextjs')
 
 const fastify = Fastify()
 fastify.register(FastifyRedis, { host: '127.0.0.1' })
@@ -136,7 +136,7 @@ fastify.register(function(instance) {
   instance.addHook('onRequest', function(request, reply, done) {
     // define a custom property on the request
     request.raw.customProperty = { hello: "world" }
-    // OR make the instance of fastify-redis available in the request
+    // OR make the instance of @fastify/redis available in the request
     request.raw.redisInstance = instance.redis
     done()
   })
@@ -170,7 +170,7 @@ export const getServerSideProps = async function (ctx) {
 The default timeout for plugins in Fastify is 10000ms, which can be a problem for huge Next.js Projects where the initial build time is higher than that.
 Usually, you will get an error like this:
 ```
-Error: ERR_AVVIO_PLUGIN_TIMEOUT: plugin did not start in time: /app/node_modules/fastify-nextjs/index.js. You may have forgotten to call 'done' function or to resolve a Promise
+Error: ERR_AVVIO_PLUGIN_TIMEOUT: plugin did not start in time: /app/node_modules/@fastify/nextjs/index.js. You may have forgotten to call 'done' function or to resolve a Promise
 ```
 
 The workaround or fix is to increase the plugin timeout:
