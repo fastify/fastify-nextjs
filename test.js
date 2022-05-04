@@ -7,6 +7,19 @@ const Next = require('next')
 const pino = require('pino')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
+const { IncomingMessage } = require('http')
+
+const inject = (fastify, ...args) => {
+  let opts = { Request: IncomingMessage }
+
+  if (typeof args[0] === 'string') {
+    opts.url = args[0]
+  } else {
+    opts = { ...args[0], ...opts }
+  }
+
+  return fastify.inject(opts, ...(args.slice(1)))
+}
 
 test('should construct next with proper environment', t => {
   t.plan(2)
@@ -38,7 +51,7 @@ test('should return an html document', t => {
       fastify.next('/hello')
     })
 
-  fastify.inject({
+  inject(fastify, {
     url: '/hello',
     method: 'GET'
   }, (err, res) => {
@@ -48,8 +61,8 @@ test('should return an html document', t => {
   })
 })
 
-test('should support different methods', t => {
-  t.plan(3)
+test('static pages only support GET and HEAD requests', t => {
+  t.plan(9)
 
   const fastify = Fastify()
   t.teardown(() => fastify.close())
@@ -58,11 +71,31 @@ test('should support different methods', t => {
     .register(require('./index'))
     .after(() => {
       fastify.next('/hello', { method: 'options' })
+      fastify.next('/hello', { method: 'head' })
+      fastify.next('/hello', { method: 'get' })
     })
 
-  fastify.inject({
+  inject(fastify, {
     url: '/hello',
     method: 'OPTIONS'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 405)
+    t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+  })
+
+  inject(fastify, {
+    url: '/hello',
+    method: 'GET'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 200)
+    t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+  })
+
+  inject(fastify, {
+    url: '/hello',
+    method: 'HEAD'
   }, (err, res) => {
     t.error(err)
     t.equal(res.statusCode, 200)
@@ -84,7 +117,7 @@ test('should support a custom handler', t => {
       })
     })
 
-  fastify.inject({
+  inject(fastify, {
     url: '/hello',
     method: 'GET'
   }, (err, res) => {
@@ -106,7 +139,7 @@ test('should return 404 on undefined route', t => {
       fastify.next('/hello')
     })
 
-  fastify.inject({
+  inject(fastify, {
     url: '/test',
     method: 'GET'
   }, (err, res) => {
@@ -270,7 +303,7 @@ test('should return a json data on api route', t => {
 
   t.teardown(() => fastify.close())
 
-  fastify.inject({
+  inject(fastify, {
     url: '/api/user',
     method: 'GET'
   }, (err, res) => {
@@ -303,7 +336,7 @@ test('should not log any errors', t => {
       fastify.next('/hello')
     })
 
-  fastify.inject({
+  inject(fastify, {
     url: '/hello',
     method: 'GET'
   }, (err, res) => {
@@ -350,7 +383,7 @@ test('should respect plugin logLevel', t => {
 
   t.teardown(() => fastify.close())
 
-  fastify.inject({
+  inject(fastify, {
     url: '/hello',
     method: 'GET'
   }, (err, res) => {
@@ -361,7 +394,7 @@ test('should respect plugin logLevel', t => {
     t.equal(didLog, false)
   })
 
-  fastify.inject({
+  inject(fastify, {
     url: '/api/user',
     method: 'GET'
   }, (err, res) => {
@@ -391,7 +424,7 @@ test('should preserve Fastify response headers set by plugins and hooks', t => {
       })
     })
 
-  fastify.inject({
+  inject(fastify, {
     url: '/hello',
     method: 'GET'
   }, (err, res) => {
@@ -489,7 +522,7 @@ test('should register under-pressure with underPressure: true - and expose route
     }
   })
 
-  fastify.inject({
+  inject(fastify, {
     url: '/status',
     method: 'GET'
   }, (err, res) => {
@@ -515,7 +548,7 @@ test('should decorate with next render function', async t => {
     return reply.nextRender('/hello')
   })
 
-  const res = await fastify.inject({
+  const res = await inject(fastify, {
     url: '/hello',
     method: 'GET'
   })
@@ -541,7 +574,7 @@ test('should decorate with next render error function', async t => {
     return reply.nextRenderError(new Error('Test error message'))
   })
 
-  const res = await fastify.inject({
+  const res = await inject(fastify, {
     url: '/hello',
     method: 'GET'
   })
@@ -572,7 +605,7 @@ test('should let next render any page in fastify error handler', async t => {
     return reply.nextRender('/hello')
   })
 
-  const res = await fastify.inject({
+  const res = await inject(fastify, {
     url: '/hello',
     method: 'GET'
   })
@@ -605,7 +638,7 @@ test('should let next render error page in fastify error handler', async t => {
     return reply.nextRenderError(err)
   })
 
-  const res = await fastify.inject({
+  const res = await inject(fastify, {
     url: '/hello',
     method: 'GET'
   })
@@ -617,13 +650,13 @@ test('should let next render error page in fastify error handler', async t => {
 })
 
 async function testNextAsset (t, fastify, url) {
-  const res = await fastify.inject(url)
+  const res = await inject(fastify, url)
   t.equal(res.statusCode, 200)
   t.equal(res.headers['content-type'], 'application/javascript; charset=UTF-8')
 }
 
 async function testNoServeNextAsset (t, fastify, url) {
-  const res = await fastify.inject(url)
+  const res = await inject(fastify, url)
   t.equal(res.statusCode, 404)
   t.equal(res.headers['content-type'], 'application/json; charset=utf-8')
 }
@@ -653,7 +686,7 @@ test('should preserve custom properties on the request when using onRequest hook
     done()
   })
 
-  let res = await fastify.inject({
+  let res = await inject(fastify, {
     url: '/hello',
     method: 'GET'
   })
@@ -662,7 +695,7 @@ test('should preserve custom properties on the request when using onRequest hook
   t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
   t.match(res.payload, '<div>hello world</div>')
 
-  res = await fastify.inject({
+  res = await inject(fastify, {
     url: '/custom_prop_page',
     method: 'GET'
   })
