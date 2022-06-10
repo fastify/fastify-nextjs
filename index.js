@@ -10,7 +10,7 @@ function fastifyNext (fastify, options, next) {
   if (underPressure) {
     const opts = typeof underPressure === 'object' ? underPressure : Object.create(null)
 
-    fastify.register(require('under-pressure'), opts)
+    fastify.register(require('@fastify/under-pressure'), opts)
   }
 
   const app = Next(Object.assign({}, { dev: process.env.NODE_ENV !== 'production' }, nextOptions))
