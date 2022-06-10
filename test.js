@@ -425,7 +425,7 @@ test('should handle Next initialization errors', t => {
     })
 })
 
-test('should not register under-pressure by default', t => {
+test('should not register @fastify/under-pressure by default', t => {
   const fastify = Fastify()
   t.teardown(() => fastify.close())
 
@@ -433,7 +433,7 @@ test('should not register under-pressure by default', t => {
   const underPressureStub = sinon.stub().resolves()
 
   const plugin = proxyquire('./index', {
-    'under-pressure': underPressureStub
+    '@fastify/under-pressure': underPressureStub
   })
 
   fastify.register(plugin)
@@ -443,14 +443,14 @@ test('should not register under-pressure by default', t => {
   t.end()
 })
 
-test('should register under-pressure with default options when underPressure: true', async t => {
+test('should register @fastify/under-pressure with default options when underPressure: true', async t => {
   t.plan(1)
 
   const fastify = Fastify()
   t.teardown(() => fastify.close())
 
   const plugin = proxyquire('./index', {
-    'under-pressure': async function (app, opts) {
+    '@fastify/under-pressure': async function (app, opts) {
       t.same(opts, {})
     }
   })
@@ -458,14 +458,14 @@ test('should register under-pressure with default options when underPressure: tr
   await fastify.register(plugin, { underPressure: true })
 })
 
-test('should register under-pressure with provided options when it is an object', async t => {
+test('should register @fastify/under-pressure with provided options when it is an object', async t => {
   t.plan(1)
 
   const fastify = Fastify()
   t.teardown(() => fastify.close())
 
   const plugin = proxyquire('./index', {
-    'under-pressure': async function (app, opts) {
+    '@fastify/under-pressure': async function (app, opts) {
       t.same(opts, { some: 'option' })
     }
   })
@@ -473,7 +473,7 @@ test('should register under-pressure with provided options when it is an object'
   await fastify.register(plugin, { underPressure: { some: 'option' } })
 })
 
-test('should register under-pressure with underPressure: true - and expose route if configured', t => {
+test('should register @fastify/under-pressure with underPressure: true - and expose route if configured', t => {
   t.plan(2)
 
   const fastify = Fastify()
