@@ -91,14 +91,14 @@ fastify
   })
 ```
 
-### @fastify/under-pressure
+### under-pressure
 
-The plugin includes [@fastify/under-pressure](https://github.com/fastify/under-pressure), which can be configured by providing an `underPressure` property to the plugin options.
+The plugin includes [under-pressure](https://github.com/fastify/under-pressure), which can be configured by providing an `underPressure` property to the plugin options.
 
-Using `@fastify/under-pressure` allows implementing a circuit breaker that returns an error when the health metrics are not respected.
+Using `under-pressure` allows implementing a circuit breaker that returns an error when the health metrics are not respected.
 Because React server side rendering is a blocking operation for the Node.js server, returning an error to the client allows signalling that the server is under too much load.
 
-The available options are the same as those accepted by `@fastify/under-pressure`.
+The available options are the same as those accepted by `under-pressure`.
 
 For example:
 
@@ -112,9 +112,9 @@ fastify.register(require('@fastify/nextjs'), {
 
 - `underPressure` - `bool|object`
 
-  - (default) when false, `@fastify/under-pressure` is not registered
-  - when true, `@fastify/under-pressure` is registered with default options
-  - when it is an object, `@fastify/under-pressure` is registered with the provided options
+  - (default) when false, `under-pressure` is not registered
+  - when true, `under-pressure` is registered with default options
+  - when it is an object, `under-pressure` is registered with the provided options
 
 ## Custom properties on the request object
 If you want to share custom objects (for example other fastify plugin instances - e.g. @fastify/redis) across the server/client with each page request, you can use the `onRequest` hook to add it to the request object.
