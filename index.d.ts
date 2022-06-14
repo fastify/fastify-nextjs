@@ -9,7 +9,7 @@ import type {
 } from 'fastify';
 import type { RouteGenericInterface, RouteShorthandOptions } from 'fastify/types/route';
 import { NextServer } from 'next/dist/server/next';
-import underPressure from '@fastify/under-pressure';
+import underPressure from 'under-pressure';
 
 declare module 'fastify' {
   type FastifyNextCallback = (
