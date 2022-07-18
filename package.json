@@ -42,7 +42,7 @@
     "next": "9.x.x || 10.x.x || 11.x.x || 12.x.x"
   },
   "dependencies": {
-    "fastify-plugin": "^3.0.0",
+    "fastify-plugin": "^4.0.0",
     "under-pressure": "^5.8.0"
   },
   "devDependencies": {
