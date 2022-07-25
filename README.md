@@ -8,7 +8,7 @@ React server-side rendering support for Fastify with [Next.js](https://nextjs.or
 
 ## Install
 ```
-npm i @fastify/nextjs next react react-dom --save
+npm i @fastify/nextjs next react react-dom
 ```
 
 ## Usage
