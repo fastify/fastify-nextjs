@@ -234,6 +234,28 @@ test('should not log any errors', async t => {
   fastify.close()
 })
 
+test('should preserve Fastify response headers set by plugins and hooks', async t => {
+  const fastify = await Fastify()
+    .register(require('./index'))
+    .addHook('onRequest', (_, reply, done) => {
+      reply.header('test-header', 'hello')
+
+      done()
+    })
+
+  fastify.next('/hello', (app, req, reply) => {
+    app.render(req.raw, reply.raw, '/hello', req.query, {})
+  })
+
+  const origin = await fastify.listen({ port })
+  const { statusCode, headers } = await request({ path: '/hello', origin })
+
+  t.equal(statusCode, 200)
+  t.equal(headers['test-header'], 'hello')
+
+  fastify.close()
+})
+
 test('should handle Next initialization errors', async t => {
   const error = new Error('boom')
   const plugin = proxyquire('./', {
