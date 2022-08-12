@@ -214,7 +214,6 @@ test('should not log any errors', async t => {
     formatters: {
       log: (obj) => {
         didLog = true
-
         return obj
       }
     }
