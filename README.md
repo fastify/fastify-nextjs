@@ -64,10 +64,10 @@ app.setErrorHandler((err, req, reply) => {
 })
 ```
 
-If you need to handle POST routes, you can define the HTTP method:
+If you need to handle HEAD routes, you can define the HTTP method:
 ```js
 fastify.next('/api/*', { method: 'GET' });
-fastify.next('/api/*', { method: 'POST' });
+fastify.next('/api/*', { method: 'HEAD' });
 ```
 
 ### Assets serving
