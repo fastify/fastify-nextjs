@@ -44,12 +44,12 @@ test('should return an html document', async t => {
   fastify.close()
 })
 
-test('should support different methods', async t => {
+test('should support HEAD method', async t => {
   const fastify = await Fastify().register(require('./index'))
-  fastify.next('/hello', { method: 'options' })
+  fastify.next('/hello', { method: 'head' })
 
   const origin = await fastify.listen({ port })
-  const { statusCode, headers } = await request({ path: '/hello', origin, method: 'OPTIONS' })
+  const { statusCode, headers } = await request({ path: '/hello', origin, method: 'HEAD' })
 
   t.equal(statusCode, 200)
   t.equal(headers['content-type'], 'text/html; charset=utf-8')
