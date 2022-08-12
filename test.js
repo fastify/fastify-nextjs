@@ -9,6 +9,8 @@ const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const { Agent, setGlobalDispatcher, request } = require('undici')
 
+const fastifyNext = require('./index')
+
 const port = 0
 const agent = new Agent({
   keepAliveTimeout: 1,
@@ -32,7 +34,7 @@ test('should construct next with proper environment', async t => {
 })
 
 test('should return an html document', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
@@ -45,7 +47,7 @@ test('should return an html document', async t => {
 })
 
 test('should support HEAD method', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
   fastify.next('/hello', { method: 'head' })
 
   const origin = await fastify.listen({ port })
@@ -58,7 +60,7 @@ test('should support HEAD method', async t => {
 })
 
 test('should support a custom handler', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
   fastify.next('/hello', (app, req, reply) => {
     app.render(req.raw, reply.raw, '/hello', req.query, {})
   })
@@ -73,7 +75,7 @@ test('should support a custom handler', async t => {
 })
 
 test('should return 404 on undefined route', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
@@ -85,7 +87,7 @@ test('should return 404 on undefined route', async t => {
 })
 
 test('should throw if path is not a string', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
 
   try {
     fastify.next(null)
@@ -97,7 +99,7 @@ test('should throw if path is not a string', async t => {
 })
 
 test('should throw if opts.method is not a string', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
 
   try {
     fastify.next('/hello', { method: 1 })
@@ -109,7 +111,7 @@ test('should throw if opts.method is not a string', async t => {
 })
 
 test('should throw if opts.schema is not an object', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
 
   try {
     fastify.next('/hello', { schema: 1 })
@@ -121,7 +123,7 @@ test('should throw if opts.schema is not an object', async t => {
 })
 
 test('should throw if callback is not a function', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
 
   try {
     fastify.next('/hello', {}, 1)
@@ -133,7 +135,7 @@ test('should throw if callback is not a function', async t => {
 })
 
 test('should serve /_next/* static assets', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
@@ -150,7 +152,7 @@ test('should serve /_next/* static assets', async t => {
 })
 
 test('should serve /base_path/_next/* static assets when basePath defined', async t => {
-  const fastify = await Fastify().register(require('./index'), {
+  const fastify = await Fastify().register(fastifyNext, {
     conf: {
       basePath: '/base_path'
     }
@@ -171,7 +173,7 @@ test('should serve /base_path/_next/* static assets when basePath defined', asyn
 })
 
 test('should not serve static assets with provided option noServeAssets: true', async t => {
-  const fastify = await Fastify().register(require('./index'), {
+  const fastify = await Fastify().register(fastifyNext, {
     noServeAssets: true,
     underPressure: false
   })
@@ -194,7 +196,7 @@ test('should not serve static assets with provided option noServeAssets: true', 
 })
 
 test('should return a json data on api route', async t => {
-  const fastify = await Fastify().register(require('./index'))
+  const fastify = await Fastify().register(fastifyNext)
   fastify.next('/api/*')
 
   const origin = await fastify.listen({ port })
@@ -219,7 +221,7 @@ test('should not log any errors', async t => {
     }
   })
 
-  const fastify = await Fastify({ logger }).register(require('./index'))
+  const fastify = await Fastify({ logger }).register(fastifyNext)
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
@@ -235,7 +237,7 @@ test('should not log any errors', async t => {
 
 test('should preserve Fastify response headers set by plugins and hooks', async t => {
   const fastify = await Fastify()
-    .register(require('./index'))
+    .register(fastifyNext)
     .addHook('onRequest', (_, reply, done) => {
       reply.header('test-header', 'hello')
 
@@ -308,7 +310,7 @@ test('should register under-pressure with provided options when it is an object'
 
 test('should register under-pressure with underPressure: true - and expose route if configured', async t => {
   const fastify = await Fastify()
-    .register(require('./index'), {
+    .register(fastifyNext, {
       underPressure: {
         exposeStatusRoute: true,
         maxEventLoopDelay: 10000,
@@ -328,7 +330,7 @@ test('should register under-pressure with underPressure: true - and expose route
 
 test('should decorate with next render function', async t => {
   const fastify = Fastify()
-    .register(require('./index'))
+    .register(fastifyNext)
     .addHook('onRequest', (_, reply, done) => {
       reply.header('test-header', 'hello')
 
@@ -347,7 +349,7 @@ test('should decorate with next render function', async t => {
 
 test('should decorate with next render error function', async t => {
   const fastify = Fastify()
-    .register(require('./index'))
+    .register(fastifyNext)
     .addHook('onRequest', (_, reply, done) => {
       reply.header('test-header', 'hello')
 
@@ -366,7 +368,7 @@ test('should decorate with next render error function', async t => {
 
 test('should let next render any page in fastify error handler', async t => {
   const fastify = Fastify()
-    .register(require('./index'))
+    .register(fastifyNext)
     .addHook('onRequest', (_, reply, done) => {
       reply.header('test-header', 'hello')
 
@@ -394,7 +396,7 @@ test('should let next render any page in fastify error handler', async t => {
 
 test('should let next render error page in fastify error handler', async t => {
   const fastify = Fastify()
-    .register(require('./index'))
+    .register(fastifyNext)
     .addHook('onRequest', (_, reply, done) => {
       reply.header('test-header', 'hello')
 
@@ -423,7 +425,7 @@ test('should let next render error page in fastify error handler', async t => {
 test('should preserve custom properties on the request when using onRequest hook', async t => {
   const customProperty = { value: 'test' }
   const fastify = await Fastify()
-    .register(require('./index'))
+    .register(fastifyNext)
     .addHook('onRequest', (req, _, done) => {
       req.raw.customProperty = customProperty
 
