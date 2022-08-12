@@ -89,49 +89,25 @@ test('should return 404 on undefined route', async t => {
 test('should throw if path is not a string', async t => {
   const fastify = await Fastify().register(fastifyNext)
 
-  try {
-    fastify.next(null)
-
-    t.fail()
-  } catch (e) {
-    t.equal(e.message, 'path must be a string')
-  }
+  t.throws(() => fastify.next(null), 'path must be a string')
 })
 
 test('should throw if opts.method is not a string', async t => {
   const fastify = await Fastify().register(fastifyNext)
 
-  try {
-    fastify.next('/hello', { method: 1 })
-
-    t.fail()
-  } catch (e) {
-    t.equal(e.message, 'options.method must be a string')
-  }
+  t.throws(() => fastify.next('/hello', { method: 1 }), 'options.method must be a string')
 })
 
 test('should throw if opts.schema is not an object', async t => {
   const fastify = await Fastify().register(fastifyNext)
 
-  try {
-    fastify.next('/hello', { schema: 1 })
-
-    t.fail()
-  } catch (e) {
-    t.equal(e.message, 'options.schema must be an object')
-  }
+  t.throws(() => fastify.next('/hello', { schema: 1 }), 'options.schema must be an object')
 })
 
 test('should throw if callback is not a function', async t => {
   const fastify = await Fastify().register(fastifyNext)
 
-  try {
-    fastify.next('/hello', {}, 1)
-
-    t.fail()
-  } catch (e) {
-    t.equal(e.message, 'callback must be a function')
-  }
+  t.throws(() => fastify.next('/hello', {}, 1), 'callback must be a function')
 })
 
 test('should serve /_next/* static assets', async t => {
@@ -266,13 +242,7 @@ test('should handle Next initialization errors', async t => {
     })
   })
 
-  try {
-    await Fastify().register(plugin)
-
-    t.fail()
-  } catch (err) {
-    t.strictSame(err, error)
-  }
+  t.rejects(() => Fastify().register(plugin), error)
 })
 
 test('should not register under-pressure by default', async t => {
