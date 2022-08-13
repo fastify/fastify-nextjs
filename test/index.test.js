@@ -9,7 +9,7 @@ const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const { Agent, setGlobalDispatcher, request } = require('undici')
 
-const fastifyNext = require('./index')
+const fastifyNext = require('..')
 
 const port = 0
 const agent = new Agent({
@@ -115,7 +115,7 @@ test('should serve /_next/* static assets', async t => {
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
-  const manifest = require('./.next/build-manifest.json')
+  const manifest = require('../.next/build-manifest.json')
   const assets = manifest.pages['/hello']
 
   t.ok(assets.length > 0)
@@ -136,7 +136,7 @@ test('should serve /base_path/_next/* static assets when basePath defined', asyn
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
-  const manifest = require('./.next/build-manifest.json')
+  const manifest = require('../.next/build-manifest.json')
   const assets = manifest.pages['/hello']
 
   t.ok(assets.length > 0)
@@ -156,7 +156,7 @@ test('should not serve static assets with provided option noServeAssets: true', 
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
-  const manifest = require('./.next/build-manifest.json')
+  const manifest = require('../.next/build-manifest.json')
   const assets = manifest.pages['/hello']
 
   t.ok(assets.length > 0)
@@ -235,7 +235,7 @@ test('should preserve Fastify response headers set by plugins and hooks', async 
 
 test('should handle Next initialization errors', async t => {
   const error = new Error('boom')
-  const plugin = proxyquire('./', {
+  const plugin = proxyquire('..', {
     next: () => ({
       getRequestHandler: () => { },
       prepare: () => Promise.reject(error)
@@ -247,7 +247,7 @@ test('should handle Next initialization errors', async t => {
 
 test('should not register under-pressure by default', async t => {
   const underPressureStub = sinon.stub().resolves()
-  const plugin = proxyquire('./index', {
+  const plugin = proxyquire('..', {
     'under-pressure': underPressureStub
   })
   const fastify = await Fastify().register(plugin)
@@ -259,7 +259,7 @@ test('should not register under-pressure by default', async t => {
 })
 
 test('should register under-pressure with default options when underPressure: true', async t => {
-  const plugin = proxyquire('./index', {
+  const plugin = proxyquire('..', {
     'under-pressure': async (_, opts) => {
       t.same(opts, {})
     }
@@ -269,7 +269,7 @@ test('should register under-pressure with default options when underPressure: tr
 })
 
 test('should register under-pressure with provided options when it is an object', async t => {
-  const plugin = proxyquire('./index', {
+  const plugin = proxyquire('..', {
     'under-pressure': async (_, opts) => {
       t.same(opts, { some: 'option' })
     }

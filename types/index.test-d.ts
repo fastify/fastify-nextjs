@@ -1,6 +1,6 @@
 import fastify, { FastifyInstance } from 'fastify';
 import { expectError } from 'tsd';
-import fastifyNext from './index';
+import fastifyNext from '..';
 
 // Declaration merging for custom property injection
 declare module 'http' {

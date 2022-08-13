@@ -3,6 +3,7 @@
   "version": "9.0.0",
   "description": "React server side rendering support for Fastify with Next",
   "main": "index.js",
+  "types": "types/index.d.ts",
   "standard": {
     "ignore": [
       "*.jsx"
@@ -11,10 +12,12 @@
   "scripts": {
     "build": "next build",
     "build:prod": "cross-env NODE_ENV=production next build",
-    "dev": "node example.js",
-    "serve": "npm run build:prod && cross-env NODE_ENV=production node example.js",
-    "test": "npm run test:types && npm run build:prod && standard && cross-env NODE_ENV=production tap test.js",
-    "test:types": "tsd"
+    "dev": "node examples/example.js",
+    "serve": "npm run build:prod && cross-env NODE_ENV=production node examples/example.js",
+    "lint": "standard",
+    "test": "npm run test:unit && npm run test:typescript",
+    "test:unit": "npm run build:prod && standard && cross-env NODE_ENV=production tap",
+    "test:typescript": "tsd"
   },
   "repository": {
     "type": "git",
