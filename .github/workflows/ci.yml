@@ -16,3 +16,4 @@ jobs:
     with:
       license-check: true
       license-check-allowed-additional: CC-BY-4.0;CC0-1.0
+      lint: true
