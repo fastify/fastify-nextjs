@@ -10,5 +10,5 @@ fastify
 
 fastify.listen({ port: 3000 }, err => {
   if (err) throw err
-  console.log('Server listenging on http://localhost:3000')
+  console.log('Server listening on http://localhost:3000')
 })
