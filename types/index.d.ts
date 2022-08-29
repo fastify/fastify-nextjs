@@ -22,7 +22,7 @@ declare module 'fastify' {
     next<
       RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
       ContextConfig = ContextConfigDefault,
-      SchemaCompiler = FastifySchema
+      SchemaCompiler extends FastifySchema = FastifySchema
     >(
       path: string,
       opts?:
