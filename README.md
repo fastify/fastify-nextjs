@@ -85,7 +85,7 @@ fastify
     fastify.next(`${process.env.BASE_PATH || ''}/_next/*`, (app, req, reply) => {
       // your code
       app.getRequestHandler()(req.raw, reply.raw).then(() => {
-        reply.sent = true
+        reply.hijack()
       })
     })
   })

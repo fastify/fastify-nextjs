@@ -70,7 +70,7 @@ function fastifyNext (fastify, options, next) {
 
       return handleNextRequests(req.raw, reply.raw)
         .then(() => {
-          reply.sent = true
+          reply.hijack()
         })
     }
   }
@@ -88,7 +88,7 @@ function fastifyNext (fastify, options, next) {
 
     await app.render(request.raw, reply.raw, path, request.query)
 
-    reply.sent = true
+    reply.hijack()
   }
 
   async function renderError (err) {
@@ -102,7 +102,7 @@ function fastifyNext (fastify, options, next) {
 
     await app.renderError(err, request.raw, reply.raw, request.url, request.query)
 
-    reply.sent = true
+    reply.hijack()
   }
 }
 
