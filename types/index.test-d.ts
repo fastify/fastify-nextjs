@@ -34,7 +34,7 @@ app
       return nextApp
         .getRequestHandler()(req.raw, reply.raw)
         .then(() => {
-          reply.sent = true;
+          reply.hijack()
         });
     });
 
