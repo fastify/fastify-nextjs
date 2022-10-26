@@ -2,18 +2,30 @@ name: CI
 
 on:
   push:
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
+    branches: [ master ]
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
+    branches: [ master ]
 
 jobs:
   test:
-    uses: fastify/workflows/.github/workflows/plugins-ci.yml@v3
-    with:
-      license-check: true
-      license-check-allowed-additional: CC-BY-4.0;CC0-1.0
-      lint: true
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node-version: [ 14, 16, 18 ]
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        next: [ 'next@12', 'next@13' ]
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm i --ignore-scripts
+      - run: npm install ${{ matrix.next }}
+      - run: npm test
