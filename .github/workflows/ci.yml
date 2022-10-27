@@ -17,3 +17,26 @@ jobs:
       license-check: true
       license-check-allowed-additional: CC-BY-4.0;CC0-1.0
       lint: true
+
+  test12:
+    name: 'Run tests using Next@12'
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node-version: [ 14, 16, 18 ]
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm i --ignore-scripts
+      - run: npm install next@12
+      - run: npm test
