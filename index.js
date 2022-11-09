@@ -14,7 +14,7 @@ function fastifyNext (fastify, options, next) {
 
   const app = Next(Object.assign({}, {
     dev: process.env.NODE_ENV !== 'production',
-    hostname: hostname !== undefined ? hostname : '0.0.0.0',
+    hostname: hostname !== undefined ? hostname : 'localhost',
     port: port !== undefined ? port : 3000
   }, nextOptions))
   const handleNextRequests = app.getRequestHandler()

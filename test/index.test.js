@@ -452,7 +452,7 @@ test('should testing middleware with custom port and host', async (t) => {
   const fastify = await Fastify()
     .register(fastifyNext, {
       port: 2000,
-      hostname: 'localhost'
+      hostname: '0.0.0.0'
     })
 
   fastify.next('/hello', (app, req, reply) => {
