@@ -6,6 +6,7 @@ fastify
   .register(require('..'))
   .after(() => {
     fastify.next('/hello')
+    fastify.next('/about/test')
   })
 
 fastify.listen({ port: 3000 }, err => {

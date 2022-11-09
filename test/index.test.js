@@ -14,7 +14,8 @@ const fastifyNext = require('..')
 const port = 0
 const agent = new Agent({
   keepAliveTimeout: 1,
-  keepAliveMaxTimeout: 1
+  keepAliveMaxTimeout: 1,
+  maxRedirections: 2
 })
 
 setGlobalDispatcher(agent)
@@ -427,6 +428,45 @@ test('should preserve custom properties on the request when using onRequest hook
   // For some reason React (or Next.js) adds <!-- --> in front of the property that is being evaluated on the page
   t.match(await res.body.text(), '<div>another hello world page, customProperty value: <!-- -->test</div>')
 
+  fastify.close()
+})
+
+test('should testing middleware in default', async t => {
+  const fastify = await Fastify()
+    .register(fastifyNext)
+
+  fastify.next('/hello', (app, req, reply) => {
+    app.render(req.raw, reply.raw, '/hello', req.query, {})
+  })
+  fastify.next('/about/test', (app, req, reply) => {
+    app.render(req.raw, reply.raw, '/about/test', req.query, {})
+  })
+  const origin = await fastify.listen({ port })
+
+  const res = await request({ path: '/about/test', origin })
+  t.equal(res.statusCode, 404)
+  fastify.close()
+})
+
+test('should testing middleware with custom port and host', async (t) => {
+  const fastify = await Fastify()
+    .register(fastifyNext, {
+      port: 2000,
+      hostname: 'localhost'
+    })
+
+  fastify.next('/hello', (app, req, reply) => {
+    app.render(req.raw, reply.raw, '/hello', req.query, {})
+  })
+  fastify.next('/about/test', (app, req, reply) => {
+    app.render(req.raw, reply.raw, '/about/test', req.query, {})
+  })
+  const origin = await fastify.listen({
+    port: 2000
+  })
+
+  const res = await request({ path: '/about/test', origin })
+  t.equal(res.statusCode, 404)
   fastify.close()
 })
 
