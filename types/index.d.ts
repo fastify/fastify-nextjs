@@ -9,7 +9,7 @@ import type {
 } from 'fastify';
 import type { RouteGenericInterface, RouteShorthandOptions } from 'fastify/types/route';
 import { NextServer } from 'next/dist/server/next';
-import underPressure from '@fastify/under-pressure';
+import { UnderPressureOptions } from '@fastify/under-pressure';
 
 declare module 'fastify' {
   type FastifyNextCallback = (
@@ -52,7 +52,7 @@ type NextServerConstructor = ConstructorParameters<typeof NextServer>[0];
 
 declare namespace fastifyNext {
   interface FastifyNextOptions extends NextServerConstructor {
-    underPressure?: boolean | underPressure.UnderPressureOptions;
+    underPressure?: boolean | UnderPressureOptions;
     noServeAssets?: boolean;
   }
 }
