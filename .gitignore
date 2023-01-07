@@ -135,6 +135,9 @@ dist
 # macOS files
 .DS_Store
 
+# Clinic
+.clinic
+
 # lock files
 pnpm-lock.yaml
 yarn.lock
