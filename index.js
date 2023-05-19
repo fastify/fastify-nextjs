@@ -27,16 +27,21 @@ function fastifyNext (fastify, options, next) {
           return app.close()
         })
 
-      if (!noServeAssets) {
-        const basePath = app.server.nextConfig.basePath || ''
+      if (noServeAssets) {
+        return next()
+      }
+
+      app.getServer().then(server => {
+        const basePath = server?.nextConfig?.basePath || ''
         const nextAssetsPath = `${basePath}/_next/*`
 
         fastify
           .after(() => {
             fastify.next(nextAssetsPath)
           })
-      }
-      next()
+
+        next()
+      })
     })
     .catch(err => next(err))
 
