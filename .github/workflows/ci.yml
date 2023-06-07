@@ -51,7 +51,7 @@ jobs:
         run: npm run lint
 
   test:
-    name: Run tests for next ${{ matrix.next-version }} on node ${{ matrix.node-version }} on os ${{ matrix.os }}
+    name: Run tests for next ${{ matrix.next-version }} with node ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
