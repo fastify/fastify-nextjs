@@ -16,17 +16,23 @@ on:
       - '*.md'
 
 jobs:
-  test:
-    name: 'Run tests'
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
+  dependency-review:
+      name: Dependency Review
+      if: github.event_name == 'pull_request'
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+      steps:
+          - name: Check out repo
+            uses: actions/checkout@v3
+            with:
+              persist-credentials: false
 
-    strategy:
-      matrix:
-        node-version: [ 16, 18, 20 ]
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
-
+          - name: Dependency review
+            uses: actions/dependency-review-action@v3
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
@@ -44,19 +50,20 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
-        run: npm test
-
-  test12:
-    name: 'Run tests using Next@12'
+  test:
+    name: Run tests for next ${{ matrix.next-version }} on node ${{ matrix.node-version }}
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
 
     strategy:
       matrix:
+        next-version: [12, 13]
         node-version: [ 14, 16, 18, 20 ]
         os: [ macos-latest, ubuntu-latest, windows-latest ]
+      exclude:
+        - next-version: 13
+          node-version: 14
 
     steps:
       - name: Check out repo
@@ -72,8 +79,27 @@ jobs:
       - name: Install dependencies
         run: npm i --ignore-scripts
 
-      - name: Install next version 12
+      - name: Install next 12 (if necessary)
+        if: matrix.next-version === 12
         run: npm install next@12
-        
+
       - name: Run tests
         run: npm test
+
+  automerge:
+    name: Automatically merge Dependabot pull requests
+    if: >
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.user.login == 'dependabot[bot]'
+    needs:
+      - lint
+      - test
+      - test12
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
