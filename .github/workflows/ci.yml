@@ -61,9 +61,9 @@ jobs:
         next-version: [12, 13]
         node-version: [ 14, 16, 18, 20 ]
         os: [ macos-latest, ubuntu-latest, windows-latest ]
-      exclude:
-        - next-version: 13
-          node-version: 14
+        exclude:
+          - next-version: 13
+            node-version: 14
 
     steps:
       - name: Check out repo
