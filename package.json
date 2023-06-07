@@ -1,6 +1,6 @@
 {
   "name": "@fastify/nextjs",
-  "version": "9.2.0",
+  "version": "10.0.0",
   "description": "React server side rendering support for Fastify with Next",
   "main": "index.js",
   "types": "types/index.d.ts",
