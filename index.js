@@ -1,6 +1,6 @@
 'use strict'
 
-const assert = require('assert')
+const assert = require('node:assert')
 const fp = require('fastify-plugin')
 const Next = require('next')
 
