@@ -147,5 +147,8 @@ yarn.lock
 .vscode
 .idea
 
+#tap files
+.tap/
+
 # more next stuff
 next-env.d.ts
