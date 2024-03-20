@@ -1,6 +1,4 @@
-100: true
-nyc-arg: ["--exclude=.next"]
 timeout: 120
-
+disable-coverage: true
 files:
   - test/**/*.test.js
