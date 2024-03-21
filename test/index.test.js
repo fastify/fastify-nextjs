@@ -241,8 +241,8 @@ test('should handle Next initialization errors', async t => {
       prepare: () => Promise.reject(error)
     })
   })
-
-  t.rejects(() => Fastify().register(plugin), error)
+  const fastify = Fastify().register(plugin)
+  await t.rejects(fastify.ready(), error)
 })
 
 test('should not register under-pressure by default', async t => {
