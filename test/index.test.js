@@ -197,7 +197,7 @@ test('should not log any errors', async t => {
     }
   })
 
-  const fastify = await Fastify({ logger }).register(fastifyNext)
+  const fastify = await Fastify({ loggerInstance: logger }).register(fastifyNext)
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
