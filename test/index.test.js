@@ -197,7 +197,7 @@ test('should not log any errors', async t => {
     }
   })
 
-  const fastify = await Fastify({ logger }).register(fastifyNext)
+  const fastify = await Fastify({ loggerInstance: logger }).register(fastifyNext)
   fastify.next('/hello')
 
   const origin = await fastify.listen({ port })
@@ -241,8 +241,8 @@ test('should handle Next initialization errors', async t => {
       prepare: () => Promise.reject(error)
     })
   })
-
-  t.rejects(() => Fastify().register(plugin), error)
+  const fastify = Fastify().register(plugin)
+  await t.rejects(fastify.ready(), error)
 })
 
 test('should not register under-pressure by default', async t => {
