@@ -1,4 +1,0 @@
-timeout: 120
-disable-coverage: true
-files:
-  - test/**/*.test.js
