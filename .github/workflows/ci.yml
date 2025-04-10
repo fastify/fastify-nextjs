@@ -14,6 +14,9 @@ on:
       - 'docs/**'
       - '*.md'
 
+permissions:
+  contents: read
+
 jobs:
   dependency-review:
       name: Dependency Review
@@ -41,6 +44,7 @@ jobs:
       - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
+          check-latest: true
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
