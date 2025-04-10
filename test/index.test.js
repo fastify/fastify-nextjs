@@ -1,7 +1,6 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const Next = require('next')
 const pino = require('pino')
@@ -27,8 +26,8 @@ test('should construct next with proper environment', async t => {
 
   await app.prepare()
 
-  t.equal(dev, false)
-  t.equal(app.dev, undefined)
+  t.assert.deepStrictEqual(dev, false)
+  t.assert.deepStrictEqual(app.dev, undefined)
 
   app.close()
 })
@@ -40,8 +39,8 @@ test('should return an html document', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers } = await request({ path: '/hello', origin })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['content-type'], 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['content-type'], 'text/html; charset=utf-8')
 
   fastify.close()
 })
@@ -53,8 +52,8 @@ test('should support HEAD method', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers } = await request({ path: '/hello', origin, method: 'HEAD' })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['content-type'], 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['content-type'], 'text/html; charset=utf-8')
 
   fastify.close()
 })
@@ -68,8 +67,8 @@ test('should support a custom handler', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers } = await request({ path: '/hello', origin })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['content-type'], 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['content-type'], 'text/html; charset=utf-8')
 
   fastify.close()
 })
@@ -81,7 +80,7 @@ test('should return 404 on undefined route', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode } = await request({ path: '/test', origin })
 
-  t.equal(statusCode, 404)
+  t.assert.deepStrictEqual(statusCode, 404)
 
   fastify.close()
 })
@@ -89,25 +88,25 @@ test('should return 404 on undefined route', async t => {
 test('should throw if path is not a string', async t => {
   const fastify = await Fastify().register(fastifyNext)
 
-  t.throws(() => fastify.next(null), 'path must be a string')
+  t.assert.throws(() => fastify.next(null), undefined, 'path must be a string')
 })
 
 test('should throw if opts.method is not a string', async t => {
   const fastify = await Fastify().register(fastifyNext)
 
-  t.throws(() => fastify.next('/hello', { method: 1 }), 'options.method must be a string')
+  t.assert.throws(() => fastify.next('/hello', { method: 1 }), undefined, 'options.method must be a string')
 })
 
 test('should throw if opts.schema is not an object', async t => {
   const fastify = await Fastify().register(fastifyNext)
 
-  t.throws(() => fastify.next('/hello', { schema: 1 }), 'options.schema must be an object')
+  t.assert.throws(() => fastify.next('/hello', { schema: 1 }), undefined, 'options.schema must be an object')
 })
 
 test('should throw if callback is not a function', async t => {
   const fastify = await Fastify().register(fastifyNext)
 
-  t.throws(() => fastify.next('/hello', {}, 1), 'callback must be a function')
+  t.assert.throws(() => fastify.next('/hello', {}, 1), undefined, 'callback must be a function')
 })
 
 test('should serve /_next/* static assets', async t => {
@@ -118,7 +117,7 @@ test('should serve /_next/* static assets', async t => {
   const manifest = require('../.next/build-manifest.json')
   const assets = manifest.pages['/hello']
 
-  t.ok(assets.length > 0)
+  t.assert.ok(assets.length > 0)
 
   for await (const asset of assets) {
     await testNextAsset(t, `/_next/${asset}`, origin)
@@ -139,7 +138,7 @@ test('should serve /base_path/_next/* static assets when basePath defined', asyn
   const manifest = require('../.next/build-manifest.json')
   const assets = manifest.pages['/hello']
 
-  t.ok(assets.length > 0)
+  t.assert.ok(assets.length > 0)
 
   for await (const asset of assets) {
     await testNextAsset(t, `/base_path/_next/${asset}`, origin)
@@ -159,13 +158,13 @@ test('should not serve static assets with provided option noServeAssets: true', 
   const manifest = require('../.next/build-manifest.json')
   const assets = manifest.pages['/hello']
 
-  t.ok(assets.length > 0)
+  t.assert.ok(assets.length > 0)
 
   for await (const asset of assets) {
     const { statusCode, headers } = await request({ path: `/_next/${asset}`, origin })
 
-    t.equal(statusCode, 404)
-    t.equal(headers['content-type'], 'application/json; charset=utf-8')
+    t.assert.deepStrictEqual(statusCode, 404)
+    t.assert.deepStrictEqual(headers['content-type'], 'application/json; charset=utf-8')
   }
 
   fastify.close()
@@ -178,8 +177,8 @@ test('should return a json data on api route', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers } = await request({ path: '/api/user', origin })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['content-type'], 'application/json')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['content-type'], 'application/json')
 
   fastify.close()
 })
@@ -203,10 +202,10 @@ test('should not log any errors', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers, body } = await request({ path: '/hello', origin })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['content-type'], 'text/html; charset=utf-8')
-  t.match(await body.text(), '<div>hello world</div>')
-  t.equal(didLog, false, 'Should not show any error')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['content-type'], 'text/html; charset=utf-8')
+  t.assert.ok((await body.text()).includes('<div>hello world</div>'))
+  t.assert.deepStrictEqual(didLog, false, 'Should not show any error')
 
   fastify.close()
 })
@@ -227,8 +226,8 @@ test('should preserve Fastify response headers set by plugins and hooks', async 
   const origin = await fastify.listen({ port })
   const { statusCode, headers } = await request({ path: '/hello', origin })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['test-header'], 'hello')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['test-header'], 'hello')
 
   fastify.close()
 })
@@ -242,7 +241,7 @@ test('should handle Next initialization errors', async t => {
     })
   })
   const fastify = Fastify().register(plugin)
-  await t.rejects(fastify.ready(), error)
+  await t.assert.rejects(fastify.ready(), error)
 })
 
 test('should not register under-pressure by default', async t => {
@@ -254,14 +253,12 @@ test('should not register under-pressure by default', async t => {
   const registerSpy = sinon.spy(fastify, 'register')
 
   sinon.assert.neverCalledWith(registerSpy, underPressureStub)
-
-  t.end()
 })
 
 test('should register under-pressure with default options when underPressure: true', async t => {
   const plugin = proxyquire('..', {
     'under-pressure': async (_, opts) => {
-      t.same(opts, {})
+      t.assert.deepStrictEqual(opts, {})
     }
   })
 
@@ -271,7 +268,7 @@ test('should register under-pressure with default options when underPressure: tr
 test('should register under-pressure with provided options when it is an object', async t => {
   const plugin = proxyquire('..', {
     'under-pressure': async (_, opts) => {
-      t.same(opts, { some: 'option' })
+      t.assert.deepStrictEqual(opts, { some: 'option' })
     }
   })
 
@@ -293,7 +290,7 @@ test('should register under-pressure with underPressure: true - and expose route
   const origin = await fastify.listen({ port })
   const { statusCode } = await request({ path: '/status', origin })
 
-  t.equal(statusCode, 200)
+  t.assert.deepStrictEqual(statusCode, 200)
 
   fastify.close()
 })
@@ -311,8 +308,8 @@ test('should decorate with next render function', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers } = await request({ path: '/hello', origin })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['test-header'], 'hello')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['test-header'], 'hello')
 
   fastify.close()
 })
@@ -330,8 +327,8 @@ test('should decorate with next render error function', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers } = await request({ path: '/hello', origin })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['test-header'], 'hello')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['test-header'], 'hello')
 
   fastify.close()
 })
@@ -356,10 +353,10 @@ test('should let next render any page in fastify error handler', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers, body } = await request({ path: '/hello', origin })
 
-  t.equal(statusCode, 500)
-  t.equal(headers['test-header'], 'hello')
-  t.equal(headers['content-type'], 'text/html; charset=utf-8')
-  t.match(await body.text(), '<div>hello world</div>')
+  t.assert.deepStrictEqual(statusCode, 500)
+  t.assert.deepStrictEqual(headers['test-header'], 'hello')
+  t.assert.deepStrictEqual(headers['content-type'], 'text/html; charset=utf-8')
+  t.assert.ok((await body.text()).includes('<div>hello world</div>'))
 
   fastify.close()
 })
@@ -384,10 +381,10 @@ test('should let next render error page in fastify error handler', async t => {
   const origin = await fastify.listen({ port })
   const { statusCode, headers, body } = await request({ path: '/hello', origin })
 
-  t.equal(statusCode, 500)
-  t.equal(headers['test-header'], 'hello')
-  t.equal(headers['content-type'], 'text/html; charset=utf-8')
-  t.match(await body.text(), '<div>error</div>')
+  t.assert.deepStrictEqual(statusCode, 500)
+  t.assert.deepStrictEqual(headers['test-header'], 'hello')
+  t.assert.deepStrictEqual(headers['content-type'], 'text/html; charset=utf-8')
+  t.assert.ok((await body.text()).includes('<div>error</div>'))
 
   fastify.close()
 })
@@ -403,12 +400,12 @@ test('should preserve custom properties on the request when using onRequest hook
     })
 
   fastify.next('/hello', (app, req, reply) => {
-    t.same(req.raw.customProperty, { value: 'test' })
+    t.assert.deepStrictEqual(req.raw.customProperty, { value: 'test' })
     app.render(req.raw, reply.raw, '/hello', req.query, {})
   })
 
   fastify.next('/custom_prop_page', (app, req, reply) => {
-    t.same(req.raw.customProperty, { value: 'test' })
+    t.assert.deepStrictEqual(req.raw.customProperty, { value: 'test' })
     app.render(req.raw, reply.raw, '/custom_prop_page', req.query, {})
   })
 
@@ -416,16 +413,16 @@ test('should preserve custom properties on the request when using onRequest hook
 
   let res = await request({ path: '/hello', origin })
 
-  t.equal(res.statusCode, 200)
-  t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
-  t.match(await res.body.text(), '<div>hello world</div>')
+  t.assert.deepStrictEqual(res.statusCode, 200)
+  t.assert.deepStrictEqual(res.headers['content-type'], 'text/html; charset=utf-8')
+  t.assert.ok((await res.body.text()).includes('<div>hello world</div>'))
 
   res = await request({ path: '/custom_prop_page', origin })
 
-  t.equal(res.statusCode, 200)
-  t.equal(res.headers['content-type'], 'text/html; charset=utf-8')
+  t.assert.deepStrictEqual(res.statusCode, 200)
+  t.assert.deepStrictEqual(res.headers['content-type'], 'text/html; charset=utf-8')
   // For some reason React (or Next.js) adds <!-- --> in front of the property that is being evaluated on the page
-  t.match(await res.body.text(), '<div>another hello world page, customProperty value: <!-- -->test</div>')
+  t.assert.ok((await res.body.text()).includes('<div>another hello world page, customProperty value: <!-- -->test</div>'))
 
   fastify.close()
 })
@@ -433,8 +430,8 @@ test('should preserve custom properties on the request when using onRequest hook
 async function testNextAsset (t, path, origin) {
   const { statusCode, headers, body } = await request({ path, origin })
 
-  t.equal(statusCode, 200)
-  t.equal(headers['content-type'], 'application/javascript; charset=UTF-8')
+  t.assert.deepStrictEqual(statusCode, 200)
+  t.assert.deepStrictEqual(headers['content-type'], 'application/javascript; charset=UTF-8')
 
   // Force body consumption as explained in https://github.com/nodejs/undici#garbage-collection
   // Please note that using the HEAD method in Next produces a 400 Bad Request error

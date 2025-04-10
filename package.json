@@ -16,7 +16,7 @@
     "serve": "npm run build:prod && cross-env NODE_ENV=production node examples/example.js",
     "lint": "standard",
     "test": "npm run test:unit && npm run test:typescript",
-    "test:unit": "npm run build:prod && standard && cross-env NODE_ENV=production tap",
+    "test:unit": "npm run build:prod && standard && cross-env NODE_ENV=production c8 node --test",
     "test:typescript": "tsd"
   },
   "repository": {
@@ -52,6 +52,7 @@
     "@types/node": "^22.10.6",
     "@types/react": "^18.2.67",
     "@types/react-dom": "^18.2.22",
+    "c8": "^10.1.3",
     "cross-env": "^7.0.3",
     "fastify": "^5.0.0",
     "next": "13.4.3",
@@ -61,7 +62,6 @@
     "react-dom": "^18.2.0",
     "sinon": "^20.0.0",
     "standard": "^17.1.0",
-    "tap": "^21.0.1",
     "tsd": "^0.31.0",
     "undici": "^7.2.1"
   },
