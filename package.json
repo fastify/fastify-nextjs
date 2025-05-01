@@ -62,7 +62,7 @@
     "react-dom": "^18.2.0",
     "sinon": "^20.0.0",
     "standard": "^17.1.0",
-    "tsd": "^0.31.0",
+    "tsd": "^0.32.0",
     "undici": "^7.2.1"
   },
   "publishConfig": {
