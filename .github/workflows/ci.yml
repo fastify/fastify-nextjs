@@ -82,7 +82,7 @@ jobs:
 
       - name: Install next 12 (if necessary)
         if: matrix.next-version == 12
-        run: npm install next@12
+        run: npm i --ignore-scripts next@12
 
       - name: Run tests
         run: npm test
