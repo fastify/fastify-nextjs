@@ -49,7 +49,7 @@
     "fastify-plugin": "^5.0.1"
   },
   "devDependencies": {
-    "@types/node": "^24.0.8",
+    "@types/node": "^25.0.3",
     "@types/react": "^18.2.67",
     "@types/react-dom": "^18.2.22",
     "c8": "^10.1.3",
