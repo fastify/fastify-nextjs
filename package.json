@@ -17,7 +17,7 @@
     "lint": "standard",
     "test": "npm run test:unit && npm run test:typescript",
     "test:unit": "npm run build:prod && standard && cross-env NODE_ENV=production c8 node --test",
-    "test:typescript": "tsd"
+    "test:typescript": "tstyche"
   },
   "repository": {
     "type": "git",
@@ -62,7 +62,7 @@
     "react-dom": "^18.2.0",
     "sinon": "^21.0.0",
     "standard": "^17.1.0",
-    "tsd": "^0.33.0",
+    "tstyche": "^7.0.0",
     "undici": "^7.2.1"
   },
   "publishConfig": {
