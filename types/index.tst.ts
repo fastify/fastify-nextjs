@@ -1,4 +1,5 @@
 import fastify, { FastifyInstance } from 'fastify';
+import { expect } from 'tstyche';
 import fastifyNext from '..';
 
 // Declaration merging for custom property injection
