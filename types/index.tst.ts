@@ -59,8 +59,7 @@ app
       },
     });
 
-    app.next('/unknown-option', {
-      // @ts-expect-error!
+    expect(app.next).type.not.toBeCallableWith('/unknown-option', {
       invalid: 'unknown-option'
     });
 });
