@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@fastify/under-pressure": "^9.0.1",
-    "fastify-plugin": "^5.0.1"
+    "fastify-plugin": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
