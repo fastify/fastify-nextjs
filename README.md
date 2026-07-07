@@ -185,7 +185,10 @@ CI currently runs npm@6 so when upgrading packages, please use this version.
 
 This project is kindly sponsored by:
 - [NearForm](https://nearform.com)
-- [LetzDoIt](https://www.letzdoitapp.com/)
+
+Past sponsors:
+
+- LetzDoIt
 
 ## License
 
