@@ -63,7 +63,7 @@
     "sinon": "^22.0.0",
     "standard": "^17.1.0",
     "tstyche": "^7.0.0",
-    "undici": "^7.2.1"
+    "undici": "^8.7.0"
   },
   "publishConfig": {
     "access": "public"
