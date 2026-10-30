@@ -6,6 +6,8 @@
 
 React server-side rendering support for Fastify with [Next.js](https://nextjs.org/docs/advanced-features/custom-server) framework. This library is for letting an existing Fastify server utilize NextJS, not for replacing NextJS' internal webserver with Fastify.
 
+This plugin supports the **Pages Router** only. The App Router (`app/`) is not supported: Fastify request decorations are not available there, and there is no adapter for Next's request store.
+
 ## Install
 ```
 npm i @fastify/nextjs next react react-dom
@@ -181,6 +183,8 @@ const fastify = Fastify({ pluginTimeout: isDev ? 120_000 : undefined });
 On Next 13 and 14 in development, `reply.nextRenderError()` renders `/_error` through `app.render()`, because `app.renderError()` never settles on those custom servers. Production and other majors still call `app.renderError()`.
 
 In development this plugin closes file watchers Next opens during `prepare()`, so `fastify.close()` can let the Node process exit. Watchers created after `prepare()` are left alone. Next 16 defaults to Turbopack, whose native resources cannot be released from JavaScript; pass `{ webpack: true }` if you need a clean process exit.
+
+The App Router is not supported. Use `pages/` and `getServerSideProps` if you need the Fastify request on the Next side.
 
 ## Development
 CI currently runs npm@6 so when upgrading packages, please use this version.
