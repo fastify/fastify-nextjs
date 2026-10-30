@@ -4,6 +4,10 @@ const assert = require('node:assert')
 const fp = require('fastify-plugin')
 const Next = require('next')
 
+const nextMajor = parseInt(require('next/package.json').version, 10)
+
+function noop () {}
+
 function readBasePath (server) {
   return (server && server.nextConfig && server.nextConfig.basePath) || ''
 }
@@ -48,8 +52,12 @@ function fastifyNext (fastify, options, next) {
     fastify.register(require('@fastify/under-pressure'), opts)
   }
 
-  const app = Next(Object.assign({}, { dev: process.env.NODE_ENV !== 'production' }, nextOptions))
+  const dev = nextOptions.dev === undefined ? process.env.NODE_ENV !== 'production' : nextOptions.dev
+  const app = Next(Object.assign({}, { dev }, nextOptions))
   const handleNextRequests = app.getRequestHandler()
+  // `app.renderError()` never settles in the Next 13/14 dev server (still true
+  // on current 14.x custom servers; Next has not shipped a patch).
+  const renderErrorWithHandler = dev && (nextMajor === 13 || nextMajor === 14)
   const configuredBasePath = (nextOptions.conf && nextOptions.conf.basePath) || ''
   let stripBasePathPrefix = ''
 
@@ -159,7 +167,15 @@ function fastifyNext (fastify, options, next) {
       reply.raw.setHeader(headerName, headerValue)
     }
 
-    await app.renderError(err, request.raw, reply.raw, request.url, request.query)
+    if (renderErrorWithHandler) {
+      const { statusCode } = reply
+
+      Object.defineProperty(reply.raw, 'statusCode', { configurable: true, get: () => statusCode, set: noop })
+
+      await app.render(request.raw, reply.raw, '/_error', request.query)
+    } else {
+      await app.renderError(err, request.raw, reply.raw, request.url, request.query)
+    }
 
     reply.hijack()
   }

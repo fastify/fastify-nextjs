@@ -178,6 +178,8 @@ const isDev = process.env.NODE_ENV !== 'production';
 const fastify = Fastify({ pluginTimeout: isDev ? 120_000 : undefined });
 ```
 
+On Next 13 and 14 in development, `reply.nextRenderError()` renders `/_error` through `app.render()`, because `app.renderError()` never settles on those custom servers. Production and other majors still call `app.renderError()`.
+
 ## Development
 CI currently runs npm@6 so when upgrading packages, please use this version.
 
