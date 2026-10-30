@@ -1,6 +1,6 @@
 {
   "all": true,
-  "exclude": ["test/", "coverage/", "examples/", "pages/", ".next/", "types/", "next-env.d.ts"],
+  "exclude": ["test/", "scripts/", "coverage/", "examples/", "pages/", ".next/", "types/", "next-env.d.ts"],
   "clean": true,
   "check-coverage": true,
   "branches": 100,
