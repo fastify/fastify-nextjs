@@ -180,6 +180,8 @@ const fastify = Fastify({ pluginTimeout: isDev ? 120_000 : undefined });
 
 On Next 13 and 14 in development, `reply.nextRenderError()` renders `/_error` through `app.render()`, because `app.renderError()` never settles on those custom servers. Production and other majors still call `app.renderError()`.
 
+In development this plugin closes file watchers Next opens during `prepare()`, so `fastify.close()` can let the Node process exit. Watchers created after `prepare()` are left alone. Next 16 defaults to Turbopack, whose native resources cannot be released from JavaScript; pass `{ webpack: true }` if you need a clean process exit.
+
 ## Development
 CI currently runs npm@6 so when upgrading packages, please use this version.
 

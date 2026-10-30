@@ -16,7 +16,7 @@
     "serve": "npm run build:prod && cross-env NODE_ENV=production node examples/example.js",
     "lint": "standard",
     "test": "npm run test:unit && npm run test:typescript",
-    "test:unit": "npm run build:prod && standard && cross-env NODE_ENV=production c8 node --test",
+    "test:unit": "npm run build:prod && standard && cross-env NODE_ENV=production c8 node --test \"test/**/*.test.js\"",
     "test:typescript": "tstyche"
   },
   "repository": {

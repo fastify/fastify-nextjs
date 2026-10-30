@@ -3,6 +3,7 @@
 const assert = require('node:assert')
 const fp = require('fastify-plugin')
 const Next = require('next')
+const { trackNextWatchers } = require('./lib/next-dev-watchers')
 
 const nextMajor = parseInt(require('next/package.json').version, 10)
 
@@ -58,18 +59,23 @@ function fastifyNext (fastify, options, next) {
   // `app.renderError()` never settles in the Next 13/14 dev server (still true
   // on current 14.x custom servers; Next has not shipped a patch).
   const renderErrorWithHandler = dev && (nextMajor === 13 || nextMajor === 14)
+  const releaseNextWatchers = dev ? trackNextWatchers() : noop
   const configuredBasePath = (nextOptions.conf && nextOptions.conf.basePath) || ''
   let stripBasePathPrefix = ''
 
   app
     .prepare()
     .then(() => {
+      if (typeof releaseNextWatchers.stopCollecting === 'function') {
+        releaseNextWatchers.stopCollecting()
+      }
+
       fastify
         .decorate('next', route.bind(fastify))
         .decorateReply('nextRender', render)
         .decorateReply('nextRenderError', renderError)
         .addHook('onClose', function () {
-          return app.close()
+          return app.close().finally(releaseNextWatchers)
         })
 
       if (noServeAssets) {
@@ -97,7 +103,10 @@ function fastifyNext (fastify, options, next) {
         next()
       })
     })
-    .catch(err => next(err))
+    .catch(err => {
+      releaseNextWatchers()
+      next(err)
+    })
 
   function route (path, opts, callback) {
     opts = opts || {
