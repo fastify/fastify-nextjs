@@ -72,7 +72,7 @@ fastify.next('/api/*', { method: 'HEAD' });
 
 ### Assets serving
 
-By default plugin handle route `${basePath}/_next/*` and forward to Next.js.
+By default the plugin handles `${basePath}/_next/*` and forwards those requests to Next.js. `basePath` is read from the config Next resolved (including `next.config.js`) when available, or else from `conf.basePath` passed to the plugin. On Next.js 14+ a custom server ignores `conf.basePath`; in that case the plugin still registers the prefixed assets route and strips the prefix (whole path segments only) before handing the request to Next. If `basePath` is set in `next.config.js`, Next handles it itself and URLs are passed through untouched.
 
 If you have custom preprocessing for `_next/*` requests, you can prevent this this handling with `noServeAssets: true` property for plugin options:
 
