@@ -6,6 +6,8 @@
 
 React server-side rendering support for Fastify with [Next.js](https://nextjs.org/docs/advanced-features/custom-server) framework. This library is for letting an existing Fastify server utilize NextJS, not for replacing NextJS' internal webserver with Fastify.
 
+This plugin supports the **Pages Router** only. The App Router (`app/`) is not supported: Fastify request decorations are not available there, and there is no adapter for Next's request store.
+
 ## Install
 ```
 npm i @fastify/nextjs next react react-dom
@@ -72,7 +74,7 @@ fastify.next('/api/*', { method: 'HEAD' });
 
 ### Assets serving
 
-By default plugin handle route `${basePath}/_next/*` and forward to Next.js.
+By default the plugin handles `${basePath}/_next/*` and forwards those requests to Next.js. `basePath` is read from the config Next resolved (including `next.config.js`) when available, or else from `conf.basePath` passed to the plugin. On Next.js 14+ a custom server ignores `conf.basePath`; in that case the plugin still registers the prefixed assets route and strips the prefix (whole path segments only) before handing the request to Next. If `basePath` is set in `next.config.js`, Next handles it itself and URLs are passed through untouched.
 
 If you have custom preprocessing for `_next/*` requests, you can prevent this this handling with `noServeAssets: true` property for plugin options:
 
@@ -177,6 +179,12 @@ The workaround or fix is to increase the plugin timeout:
 const isDev = process.env.NODE_ENV !== 'production';
 const fastify = Fastify({ pluginTimeout: isDev ? 120_000 : undefined });
 ```
+
+On Next 13 and 14 in development, `reply.nextRenderError()` renders `/_error` through `app.render()`, because `app.renderError()` never settles on those custom servers. Production and other majors still call `app.renderError()`.
+
+In development this plugin closes file watchers Next opens during `prepare()`, so `fastify.close()` can let the Node process exit. Watchers created after `prepare()` are left alone. Next 16 defaults to Turbopack, whose native resources cannot be released from JavaScript; pass `{ webpack: true }` if you need a clean process exit.
+
+The App Router is not supported. Use `pages/` and `getServerSideProps` if you need the Fastify request on the Next side.
 
 ## Development
 CI currently runs npm@6 so when upgrading packages, please use this version.
