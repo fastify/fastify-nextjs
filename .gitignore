@@ -152,3 +152,4 @@ yarn.lock
 
 # more next stuff
 next-env.d.ts
+.next-dev-integration
