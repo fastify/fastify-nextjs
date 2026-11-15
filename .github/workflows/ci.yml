@@ -65,10 +65,24 @@ jobs:
       contents: read
 
     strategy:
+      fail-fast: false
       matrix:
-        next-version: [12, 13]
-        node-version: [ 20, 22, 24]
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        next-version: [16]
+        node-version: [20, 22, 24]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - next-version: 12
+            node-version: 22
+            os: ubuntu-latest
+          - next-version: 13
+            node-version: 22
+            os: ubuntu-latest
+          - next-version: 14
+            node-version: 22
+            os: ubuntu-latest
+          - next-version: 15
+            node-version: 22
+            os: ubuntu-latest
 
     steps:
       - name: Check out repo
@@ -85,9 +99,17 @@ jobs:
       - name: Install dependencies
         run: npm i --ignore-scripts
 
-      - name: Install next 12 (if necessary)
-        if: matrix.next-version == 12
-        run: npm i --ignore-scripts next@12
+      - name: Install Next.js ${{ matrix.next-version }} with React 18
+        if: matrix.next-version == 12 || matrix.next-version == 13 || matrix.next-version == 14
+        run: npm i --ignore-scripts next@${{ matrix.next-version }} react@18.3.1 react-dom@18.3.1 @types/react@18 @types/react-dom@18
+
+      - name: Install Next.js 15
+        if: matrix.next-version == 15
+        run: npm i --ignore-scripts next@15
+
+      - name: Install Next.js 16 with React 19
+        if: matrix.next-version == 16
+        run: npm i --ignore-scripts next@16 react@19 react-dom@19 @types/react@19 @types/react-dom@19
 
       - name: Run tests
         run: npm test
