@@ -427,6 +427,230 @@ test('should preserve custom properties on the request when using onRequest hook
   fastify.close()
 })
 
+function createNextStub (overrides) {
+  return () => ({
+    // Echoes the URL Next receives, so tests can assert on base path handling.
+    getRequestHandler: () => async (req, res) => {
+      res.statusCode = 200
+      res.setHeader('content-type', 'application/javascript; charset=UTF-8')
+      res.end(req.url)
+    },
+    prepare: () => Promise.resolve(),
+    close: () => Promise.resolve(),
+    render: async (_req, res) => {
+      res.statusCode = 200
+      res.end('ok')
+    },
+    renderError: async (_err, _req, res) => {
+      res.statusCode = 200
+      res.end('ok')
+    },
+    ...overrides
+  })
+}
+
+async function get (origin, path) {
+  const { statusCode, body } = await request({ path, origin })
+
+  return { statusCode, text: await body.text() }
+}
+
+test('should strip conf.basePath from assets when Next ignores it (Next 14+)', async t => {
+  const plugin = proxyquire('..', {
+    next: createNextStub()
+  })
+
+  const fastify = await Fastify().register(plugin, {
+    conf: {
+      basePath: '/from_conf'
+    }
+  })
+  fastify.next('/hello')
+
+  const origin = await fastify.listen({ port })
+
+  t.assert.deepStrictEqual(await get(origin, '/from_conf/_next/static/test.js'), { statusCode: 200, text: '/_next/static/test.js' })
+  t.assert.deepStrictEqual(await get(origin, '/hello'), { statusCode: 200, text: '/hello' })
+
+  fastify.close()
+})
+
+test('should only strip conf.basePath on whole path segments', async t => {
+  const plugin = proxyquire('..', {
+    next: createNextStub()
+  })
+
+  const fastify = await Fastify().register(plugin, {
+    conf: {
+      basePath: '/app'
+    }
+  })
+  fastify.next('/*')
+
+  const origin = await fastify.listen({ port })
+
+  t.assert.deepStrictEqual((await get(origin, '/app')).text, '/')
+  t.assert.deepStrictEqual((await get(origin, '/app?x=1')).text, '/?x=1')
+  t.assert.deepStrictEqual((await get(origin, '/app/page?x=1')).text, '/page?x=1')
+  t.assert.deepStrictEqual((await get(origin, '/application')).text, '/application')
+  t.assert.deepStrictEqual((await get(origin, '/other/app')).text, '/other/app')
+
+  fastify.close()
+})
+
+test('should restore the original request url after Next handled the request', async t => {
+  const seen = []
+  const plugin = proxyquire('..', {
+    next: createNextStub({
+      getRequestHandler: () => async (req, res) => {
+        seen.push({ req, urlSeenByNext: req.url })
+        res.end('ok')
+      }
+    })
+  })
+
+  const fastify = await Fastify().register(plugin, { conf: { basePath: '/from_conf' } })
+
+  const origin = await fastify.listen({ port })
+  await get(origin, '/from_conf/_next/static/test.js')
+
+  t.assert.deepStrictEqual(seen.length, 1)
+  t.assert.deepStrictEqual(seen[0].urlSeenByNext, '/_next/static/test.js')
+  t.assert.deepStrictEqual(seen[0].req.url, '/from_conf/_next/static/test.js')
+
+  fastify.close()
+})
+
+test('should read basePath from Next getServer() (Next 12/13) when conf is not provided', async t => {
+  const plugin = proxyquire('..', {
+    next: createNextStub({
+      getServer: () => Promise.resolve({ nextConfig: { basePath: '/from_server' } })
+    })
+  })
+
+  const fastify = await Fastify().register(plugin)
+
+  const origin = await fastify.listen({ port })
+
+  // Next resolved the basePath itself, so it must receive the URL untouched
+  t.assert.deepStrictEqual(await get(origin, '/from_server/_next/static/test.js'), { statusCode: 200, text: '/from_server/_next/static/test.js' })
+
+  fastify.close()
+})
+
+test('should read basePath from Next app.server (Next 14+) when next.config.js defines it', async t => {
+  const plugin = proxyquire('..', {
+    next: createNextStub({
+      server: { nextConfig: { basePath: '/from_next_config' } }
+    })
+  })
+
+  const fastify = await Fastify().register(plugin)
+
+  const origin = await fastify.listen({ port })
+
+  t.assert.deepStrictEqual(await get(origin, '/from_next_config/_next/static/test.js'), { statusCode: 200, text: '/from_next_config/_next/static/test.js' })
+  t.assert.deepStrictEqual((await get(origin, '/_next/static/test.js')).statusCode, 404)
+
+  fastify.close()
+})
+
+test('should fall back to conf.basePath when getServer() has no basePath', async t => {
+  const plugin = proxyquire('..', {
+    next: createNextStub({
+      getServer: () => Promise.resolve({ nextConfig: {} })
+    })
+  })
+
+  const fastify = await Fastify().register(plugin, {
+    conf: {
+      basePath: '/from_conf'
+    }
+  })
+
+  const origin = await fastify.listen({ port })
+
+  t.assert.deepStrictEqual(await get(origin, '/from_conf/_next/static/test.js'), { statusCode: 200, text: '/_next/static/test.js' })
+
+  fastify.close()
+})
+
+test('should fall back to conf.basePath when reading Next config throws', async t => {
+  const plugin = proxyquire('..', {
+    next: createNextStub({
+      getServer: () => {
+        throw new Error('prepare() must be called before performing this operation')
+      }
+    })
+  })
+
+  const fastify = await Fastify().register(plugin, {
+    conf: {
+      basePath: '/from_conf'
+    }
+  })
+
+  const origin = await fastify.listen({ port })
+
+  t.assert.deepStrictEqual(await get(origin, '/from_conf/_next/static/test.js'), { statusCode: 200, text: '/_next/static/test.js' })
+
+  fastify.close()
+})
+
+test('should ignore a missing Next server when resolving basePath', async t => {
+  const plugin = proxyquire('..', {
+    next: createNextStub({
+      getServer: () => Promise.resolve(null)
+    })
+  })
+
+  const fastify = await Fastify().register(plugin)
+
+  const origin = await fastify.listen({ port })
+
+  t.assert.deepStrictEqual(await get(origin, '/_next/static/test.js'), { statusCode: 200, text: '/_next/static/test.js' })
+
+  fastify.close()
+})
+
+test('should not read app.server until prepare() has finished', async t => {
+  let prepared = false
+  let serverReadsBeforePrepare = 0
+
+  const plugin = proxyquire('..', {
+    next: () => ({
+      getRequestHandler: () => async (req, res) => {
+        res.statusCode = 200
+        res.setHeader('content-type', 'application/javascript; charset=UTF-8')
+        res.end(req.url)
+      },
+      prepare: () => {
+        prepared = true
+        return Promise.resolve()
+      },
+      close: () => Promise.resolve(),
+      get server () {
+        if (!prepared) {
+          serverReadsBeforePrepare++
+          throw new Error('prepare() must be called before performing this operation')
+        }
+
+        return { nextConfig: { basePath: '/from_next_config' } }
+      }
+    })
+  })
+
+  const fastify = await Fastify().register(plugin)
+
+  t.assert.deepStrictEqual(serverReadsBeforePrepare, 0)
+
+  const origin = await fastify.listen({ port })
+
+  t.assert.deepStrictEqual(await get(origin, '/from_next_config/_next/static/test.js'), { statusCode: 200, text: '/from_next_config/_next/static/test.js' })
+
+  fastify.close()
+})
+
 async function testNextAsset (t, path, origin) {
   const { statusCode, headers, body } = await request({ path, origin })
 
