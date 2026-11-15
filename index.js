@@ -4,6 +4,41 @@ const assert = require('node:assert')
 const fp = require('fastify-plugin')
 const Next = require('next')
 
+function readBasePath (server) {
+  return (server && server.nextConfig && server.nextConfig.basePath) || ''
+}
+
+// Reads the basePath Next itself resolved (including next.config.js).
+// Next 12/13 expose it through `getServer()`; Next 14+ custom servers expose
+// it through `app.server`, which throws until `prepare()` has finished.
+function resolveRuntimeBasePath (app) {
+  try {
+    if (typeof app.getServer === 'function') {
+      return Promise.resolve(app.getServer()).then(readBasePath)
+    }
+
+    return Promise.resolve(readBasePath(app.server))
+  } catch {
+    return Promise.resolve('')
+  }
+}
+
+// Removes `prefix` from `url` only when it matches whole path segments, so that
+// `/app` strips `/app/x` and `/app?y=1` but leaves `/application` untouched.
+function stripBasePath (url, prefix) {
+  if (!prefix || !url.startsWith(prefix)) {
+    return url
+  }
+
+  const rest = url.slice(prefix.length)
+
+  if (rest === '' || rest[0] === '?') {
+    return '/' + rest
+  }
+
+  return rest[0] === '/' ? rest : url
+}
+
 function fastifyNext (fastify, options, next) {
   const { underPressure, noServeAssets, ...nextOptions } = options
 
@@ -15,6 +50,8 @@ function fastifyNext (fastify, options, next) {
 
   const app = Next(Object.assign({}, { dev: process.env.NODE_ENV !== 'production' }, nextOptions))
   const handleNextRequests = app.getRequestHandler()
+  const configuredBasePath = (nextOptions.conf && nextOptions.conf.basePath) || ''
+  let stripBasePathPrefix = ''
 
   app
     .prepare()
@@ -31,8 +68,17 @@ function fastifyNext (fastify, options, next) {
         return next()
       }
 
-      app.getServer().then(server => {
-        const basePath = server?.nextConfig?.basePath || ''
+      return resolveRuntimeBasePath(app).then(runtimeBasePath => {
+        const basePath = runtimeBasePath || configuredBasePath
+
+        // Next 14+ ignores `conf.basePath` on custom servers (it only honours
+        // next.config.js, which is detected above). Register the prefixed assets
+        // route from the plugin option, then strip the prefix before handing the
+        // request to Next.
+        if (configuredBasePath && !runtimeBasePath) {
+          stripBasePathPrefix = configuredBasePath
+        }
+
         const nextAssetsPath = `${basePath}/_next/*`
 
         fastify
@@ -73,9 +119,17 @@ function fastifyNext (fastify, options, next) {
         return callback(app, req, reply)
       }
 
+      // Next may ignore `conf.basePath`, so hand it the URL without the prefix,
+      // and restore the original afterwards for Fastify hooks and logging.
+      const originalUrl = req.raw.url
+      req.raw.url = stripBasePath(originalUrl, stripBasePathPrefix)
+
       return handleNextRequests(req.raw, reply.raw)
         .then(() => {
           reply.hijack()
+        })
+        .finally(() => {
+          req.raw.url = originalUrl
         })
     }
   }
